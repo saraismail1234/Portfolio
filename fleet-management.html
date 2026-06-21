@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Management — Sara Ismail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #F8F8F6; --surface: #FFFFFF; --border: #E4E4E0; --text-primary: #111110; --text-secondary: #6B6B68; --text-muted: #9B9B98; --accent: #F59E0B; --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
+    /* scroll-behavior handled by Lenis */
+    body { font-family: 'Google Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(26,26,46,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 32px; }
+    .nav-inner { max-width: 1120px; margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-back { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6); text-decoration: none; transition: color var(--transition); }
+    .nav-back:hover { color: #fff; }
+    .nav-label { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.35); }
+    .hero { background: linear-gradient(160deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%); padding: 72px 32px 64px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .hero-inner { max-width: 1120px; margin: 0 auto; }
+    .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #FCD34D; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.08; color: #fff; margin-bottom: 16px; max-width: 700px; }
+    .hero-sub { font-size: 17px; color: rgba(255,255,255,0.65); max-width: 560px; line-height: 1.7; margin-bottom: 28px; }
+    .meta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+    .tag-shipped { background: #DCFCE7; color: #166534; } .tag-web { background: #EFF6FF; color: #1E40AF; } .tag-role { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.75); } .tag-year { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.55); }
+    .cover-wrap { max-width: 1120px; margin: 0 auto; padding: 48px 32px 0; }
+    .cover-img { width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.15); display: block; min-height: 120px; background: #16213E; }
+    .cover-caption { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 12px; }
+    .body-wrap { max-width: 1120px; margin: 0 auto; padding: 64px 32px 0; display: grid; grid-template-columns: 680px 1fr; gap: 80px; align-items: start; }
+    .side-col { position: sticky; top: 80px; }
+    .section { margin-bottom: 64px; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+    .section h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 16px; line-height: 1.25; }
+    .section p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 14px; }
+    .section p:last-child { margin-bottom: 0; }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+    .feature-icon { font-size: 18px; margin-bottom: 6px; } .feature-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; } .feature-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .decisions { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; border-left: 3px solid var(--accent); }
+    .decision-number { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #D97706; margin-bottom: 6px; }
+    .decision-title { font-size: 15px; font-weight: 650; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+    .decision-body { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+    .screens { margin-top: 8px; display: flex; flex-direction: column; gap: 16px; }
+    .screen-card { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+    .screen-img { width: 100%; display: block; background: var(--bg); }
+    .screen-caption { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .screen-caption-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+    .screen-caption-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .impact-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; }
+    .impact-number { font-size: 30px; font-weight: 700; letter-spacing: -1px; color: var(--text-primary); line-height: 1; }
+    .impact-label { font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.45; }
+    .side-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; margin-bottom: 16px; }
+    .side-block-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    .side-row { display: flex; flex-direction: column; gap: 10px; }
+    .side-item-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .side-item-value { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+    .side-item-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+    .scope-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .scope-item { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+    .scope-item::before { content: "→"; color: var(--text-muted); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+    .project-nav { max-width: 1120px; margin: 0 auto; padding: 48px 32px 80px; display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border); margin-top: 64px; }
+    .proj-nav-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; text-decoration: none; color: inherit; transition: all var(--transition); display: block; max-width: 280px; }
+    .proj-nav-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .proj-nav-dir { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .proj-nav-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .proj-nav-card.next { text-align: right; margin-left: auto; }
+    @media (max-width: 900px) { .body-wrap { grid-template-columns: 1fr; gap: 0; } .side-col { position: static; } .feature-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .hero, .cover-wrap, .body-wrap, .project-nav { padding-left: 20px; padding-right: 20px; } }
+  </style>
+</head>
+<body>
+  <nav><div class="nav-inner"><a href="index.html" class="nav-back">← Back to portfolio</a><span class="nav-label">Fleet Management</span></div></nav>
+
+  <div class="hero"><div class="hero-inner">
+    <div class="hero-eyebrow">noon Food</div>
+    <h1>Fleet Management</h1>
+    <p class="hero-sub">An operations dashboard for managing noon Food's delivery fleets in real time — giving ops teams visibility, control, and the ability to act before problems escalate.</p>
+    <div class="meta-row">
+      <span class="tag tag-shipped">✓ Shipped</span>
+      <span class="tag tag-web">Web · Ops dashboard</span>
+      <span class="tag tag-role">Solo</span>
+      <span class="tag tag-year"><!-- PLACEHOLDER -->2024</span>
+    </div>
+  </div></div>
+
+  <div class="cover-wrap">
+    <!-- PLACEHOLDER: Export Fleet Management cover from Figma (8IXqTD5CSE1yjNlzZrqxeX)
+         <img class="cover-img" src="images/fleet-cover.png" alt="Fleet Management" /> -->
+    <div class="cover-img" style="display:flex;align-items:center;justify-content:center;color:#FCD34D;font-size:14px;font-weight:500;min-height:180px;">
+      📸 Export Fleet Management cover from Figma → fleet-cover.png
+    </div>
+    <p class="cover-caption">noon Food — Fleet Management · Operations dashboard</p>
+  </div>
+
+  <div class="body-wrap">
+    <div class="main-col">
+
+      <div class="section">
+        <div class="section-label">Overview</div>
+        <p>Fleet management is the operations layer that sits above the delivery agent experience. While agents use the DA App in the field, operations managers need a web dashboard to see what's happening across their entire fleet — which agents are active, which orders are in trouble, where capacity is needed, and which DAs need attention.</p>
+        <p>I designed this dashboard from scratch, solo — covering everything from the navigation structure and live fleet map to agent attention alerts, heatmaps, order tracking, and fleet configuration.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">The Problem</div>
+        <h2>Ops teams were managing fleets without real-time visibility</h2>
+        <p>Before this dashboard, operations teams were piecing together fleet status from multiple sources — spreadsheets, phone calls, and disparate internal tools. There was no single place to see the live state of a fleet, understand which agents needed intervention, or configure zones and assignments.</p>
+        <p>The result was reactive management: ops teams found out about problems after they'd already escalated, rather than being able to prevent them.
+        <!-- PLACEHOLDER: Add any specific pain point from ops team research --></p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">What I designed</div>
+        <h2>A full-stack operations dashboard</h2>
+        <div class="feature-grid">
+          <div class="feature-card"><div class="feature-icon">🗺</div><div class="feature-title">Live fleet map</div><div class="feature-desc">Real-time view of all active DAs and orders on a map</div></div>
+          <div class="feature-card"><div class="feature-icon">⚠️</div><div class="feature-title">DA attention alerts</div><div class="feature-desc">Surfacing agents who need intervention — stuck, late, or flagged</div></div>
+          <div class="feature-card"><div class="feature-icon">🌡</div><div class="feature-title">Heatmaps</div><div class="feature-desc">Demand and coverage heatmaps for zone planning</div></div>
+          <div class="feature-card"><div class="feature-icon">📋</div><div class="feature-title">Order detail views</div><div class="feature-desc">Deep-dive on any order — status, agent, timeline</div></div>
+          <div class="feature-card"><div class="feature-icon">📢</div><div class="feature-title">DA announcements</div><div class="feature-desc">Broadcast messages to agents in a specific zone or fleet</div></div>
+          <div class="feature-card"><div class="feature-icon">⚙️</div><div class="feature-title">Fleet configuration</div><div class="feature-desc">Zone setup, capacity rules, and fleet parameters</div></div>
+          <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Dashboard overview</div><div class="feature-desc">At-a-glance fleet health — active DAs, orders, and KPIs</div></div>
+          <div class="feature-card"><div class="feature-icon">🚚</div><div class="feature-title">Order tracking</div><div class="feature-desc">Live order status and delivery timeline for any order</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Process & Key Decisions</div>
+        <h2>Designing for ops — speed and signal over aesthetics</h2>
+        <div class="decisions">
+          <div class="decision-card">
+            <div class="decision-number">Decision 01</div>
+            <div class="decision-title">Lead with attention — surface problems before ops teams go looking</div>
+            <div class="decision-body">The primary job of an ops manager is to find and fix problems. Rather than presenting a neutral view of the fleet, the dashboard leads with agents and situations that need attention — surfaced automatically, not buried in filters. The "DA need attention" view was designed as the default starting point, not a secondary tab.</div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 02</div>
+            <div class="decision-title">Map and list as complementary views — not competing ones</div>
+            <div class="decision-body">Ops teams switch between spatial thinking (where is everyone?) and list-based thinking (who specifically needs attention?). The dashboard treats the live map and the agent list as two views of the same data, always in sync — selecting an agent on the map highlights them in the list, and vice versa.</div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 03</div>
+            <div class="decision-title">Design announcement tooling for clarity, not just reach</div>
+            <div class="decision-body">Ops teams need to communicate quickly with specific groups of agents — not blast the whole fleet. The announcement tool was designed around targeting (by zone, status, or fleet) with a clear preview of who will receive the message before it's sent.
+            <!-- PLACEHOLDER: Add any specific ops workflow this improved --></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">The Work</div>
+        <h2>Key screens</h2>
+        <div class="screens">
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export Dashboard or Live Fleet view from Figma (8IXqTD5CSE1yjNlzZrqxeX)
+                 <img class="screen-img" src="images/fleet-dashboard.png" alt="Fleet dashboard" /> -->
+            <div class="screen-img" style="min-height:280px;display:flex;align-items:center;justify-content:center;background:#1A1A2E;color:#FCD34D;font-size:13px;font-weight:500;">
+              📸 Dashboard / Live Fleet View — export from Figma Fleet Management file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Live Fleet Dashboard</div>
+              <div class="screen-caption-desc">Real-time fleet overview — active DAs on map, attention alerts, order status, and at-a-glance KPIs for ops managers.</div>
+            </div>
+          </div>
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export DA need attention page from Figma
+                 <img class="screen-img" src="images/fleet-attention.png" alt="DA attention" /> -->
+            <div class="screen-img" style="min-height:240px;display:flex;align-items:center;justify-content:center;background:#16213E;color:#FCD34D;font-size:13px;font-weight:500;">
+              📸 DA Need Attention — export from Figma Fleet Management file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">DA Attention Alerts</div>
+              <div class="screen-caption-desc">Automatically surfaced agents needing intervention — with context on what's wrong and quick actions to resolve.</div>
+            </div>
+          </div>
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export Heatmap page from Figma
+                 <img class="screen-img" src="images/fleet-heatmap.png" alt="Heatmap" /> -->
+            <div class="screen-img" style="min-height:220px;display:flex;align-items:center;justify-content:center;background:#0F3460;color:#FCD34D;font-size:13px;font-weight:500;">
+              📸 Heatmap — export from Figma Fleet Management file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Demand & Coverage Heatmap</div>
+              <div class="screen-caption-desc">Zone-level demand visualisation to help ops teams plan DA placement and identify coverage gaps.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Impact & Outcomes</div>
+        <h2>Shipped and in active use by noon Food ops teams</h2>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-number">8+</div>
+            <div class="impact-label">Distinct surfaces designed — from live map to fleet config</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">✓</div>
+            <div class="impact-label">Shipped and used by noon Food operations teams across markets</div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Add ops metric if you have it — e.g. "reduced time to detect stuck orders" -->
+            <div class="impact-number">↑</div>
+            <div class="impact-label" style="font-style:italic;color:var(--text-muted);">Add ops metric — e.g. response time to fleet issues, or DA attention resolution rate</div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: e.g. markets live, number of ops users -->
+            <div class="impact-number">↑</div>
+            <div class="impact-label" style="font-style:italic;color:var(--text-muted);">Add scale metric — e.g. number of ops managers using the dashboard daily</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="side-col">
+      <div class="side-block">
+        <div class="side-block-title">Project details</div>
+        <div class="side-row">
+          <div class="side-item"><div class="side-item-label">Company</div><div class="side-item-value">noon Food</div></div>
+          <div class="side-item"><div class="side-item-label">Product</div><div class="side-item-value">Fleet Management Dashboard</div></div>
+          <div class="side-item"><div class="side-item-label">Platform</div><div class="side-item-value">Web</div></div>
+          <div class="side-item"><div class="side-item-label">Status</div><div class="side-item-value" style="color:#166534;">✓ Shipped</div></div>
+          <div class="side-item"><div class="side-item-label">Year</div><div class="side-item-value"><!-- PLACEHOLDER -->2024</div></div>
+        </div>
+      </div>
+      <div class="side-block">
+        <div class="side-block-title">My role</div>
+        <div class="side-row">
+          <div class="side-item"><div class="side-item-label">Title</div><div class="side-item-value"><!-- PLACEHOLDER -->Product Design Lead</div></div>
+          <div class="side-item"><div class="side-item-label">Ownership</div><div class="side-item-value">Solo</div></div>
+        </div>
+      </div>
+      <div class="side-block">
+        <div class="side-block-title">What I owned</div>
+        <ul class="scope-list">
+          <li class="scope-item">End-to-end UX of the fleet dashboard</li>
+          <li class="scope-item">Live fleet map and agent views</li>
+          <li class="scope-item">DA attention alerting system</li>
+          <li class="scope-item">Heatmap and zone planning surfaces</li>
+          <li class="scope-item">Order detail and tracking views</li>
+          <li class="scope-item">Announcement tooling</li>
+          <li class="scope-item">Fleet configuration flows</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-nav">
+    <a class="proj-nav-card" href="da-app.html"><div class="proj-nav-dir">← Previous</div><div class="proj-nav-title">Delivery Agent App</div></a>
+    <a class="proj-nav-card next" href="sellerside-ds.html"><div class="proj-nav-dir">Next →</div><div class="proj-nav-title">Sellerside Design System</div></a>
+  </div>
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>new Lenis({ autoRaf: true, autoToggle: true, anchors: true, allowNestedScroll: true });</script>
+</body>
+</html>

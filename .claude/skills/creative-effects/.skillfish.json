@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "creative-effects",
+  "owner": "lobbi-docs",
+  "repo": "claude",
+  "path": "plugins/react-animation-studio/skills/creative-effects",
+  "branch": "main",
+  "sha": "51b39170080eecc90c2b2e97a90cd877c0c0d963",
+  "source": "manual"
+}

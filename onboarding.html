@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller Onboarding — Sara Ismail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F8F8F6;
+      --surface: #FFFFFF;
+      --border: #E4E4E0;
+      --text-primary: #111110;
+      --text-secondary: #6B6B68;
+      --text-muted: #9B9B98;
+      --accent: #0D9488;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* scroll-behavior handled by Lenis */
+    body {
+      font-family: 'Google Sans', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text-primary);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(248,248,246,0.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 32px;
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; transition: color var(--transition);
+    }
+    .nav-back:hover { color: var(--text-primary); }
+    .nav-label { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(160deg, #F0FDFA 0%, #CCFBF1 60%, #99F6E4 100%);
+      padding: 72px 32px 64px; border-bottom: 1px solid var(--border);
+    }
+    .hero-inner { max-width: 1120px; margin: 0 auto; }
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: #0F766E; margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px); font-weight: 700;
+      letter-spacing: -1.5px; line-height: 1.08;
+      color: #134E4A; margin-bottom: 16px; max-width: 700px;
+    }
+    .hero-sub {
+      font-size: 17px; color: #0F766E; max-width: 560px;
+      line-height: 1.7; margin-bottom: 28px;
+    }
+    .meta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag {
+      display: inline-flex; align-items: center;
+      padding: 4px 12px; border-radius: 100px;
+      font-size: 12px; font-weight: 500;
+    }
+    .tag-shipped  { background: #DCFCE7; color: #166534; }
+    .tag-web      { background: #EFF6FF; color: #1E40AF; }
+    .tag-role     { background: rgba(255,255,255,0.7); color: #475569; }
+    .tag-year     { background: rgba(255,255,255,0.7); color: #64748B; }
+
+    /* ── COVER IMAGE ─────────────────────────────── */
+    .cover-wrap { max-width: 1120px; margin: 0 auto; padding: 48px 32px 0; }
+    .cover-img {
+      width: 100%; border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10); display: block;
+      min-height: 120px; background: #F0FDFA;
+    }
+    .cover-caption { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 12px; }
+
+    /* ── BODY ────────────────────────────────────── */
+    .body-wrap {
+      max-width: 1120px; margin: 0 auto; padding: 64px 32px 0;
+      display: grid; grid-template-columns: 680px 1fr;
+      gap: 80px; align-items: start;
+    }
+    .side-col { position: sticky; top: 80px; }
+
+    /* ── SECTIONS ────────────────────────────────── */
+    .section { margin-bottom: 64px; }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+      color: var(--text-primary); margin-bottom: 16px; line-height: 1.25;
+    }
+    .section p {
+      font-size: 16px; color: var(--text-secondary);
+      line-height: 1.75; margin-bottom: 14px;
+    }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* ── IMPACT NUMBERS (hero row) ───────────────── */
+    .impact-hero {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; margin: 24px 0;
+    }
+    .impact-hero-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px 18px;
+      border-top: 3px solid var(--accent);
+    }
+    .impact-hero-number {
+      font-size: 30px; font-weight: 700; letter-spacing: -1px;
+      color: var(--text-primary); line-height: 1;
+    }
+    .impact-hero-label {
+      font-size: 13px; color: var(--text-secondary);
+      margin-top: 6px; line-height: 1.45;
+    }
+    .impact-hero-sub {
+      font-size: 11px; color: var(--text-muted); margin-top: 3px;
+    }
+
+    /* ── ISSUE LIST ──────────────────────────────── */
+    .issue-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .issue-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+    }
+    .issue-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: #FEF2F2; display: flex; align-items: center;
+      justify-content: center; font-size: 13px; flex-shrink: 0;
+    }
+    .issue-text { font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
+    .issue-text strong { display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 2px; }
+
+    /* ── DECISION CARDS ──────────────────────────── */
+    .decisions { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .decision-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px 22px;
+      border-left: 3px solid var(--accent);
+    }
+    .decision-number {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+    }
+    .decision-title {
+      font-size: 15px; font-weight: 650; color: var(--text-primary);
+      margin-bottom: 8px; line-height: 1.3;
+    }
+    .decision-body { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+    .decision-metric {
+      margin-top: 10px; padding: 10px 12px;
+      background: #F0FDFA; border-radius: var(--radius-sm);
+      font-size: 13px; color: #0F766E; font-weight: 500;
+    }
+
+    /* ── SCREENS ─────────────────────────────────── */
+    .screens { margin-top: 8px; display: flex; flex-direction: column; gap: 16px; }
+    .screen-card {
+      border-radius: var(--radius-md); overflow: hidden;
+      border: 1px solid var(--border); background: var(--surface);
+    }
+    .screen-img { width: 100%; display: block; background: var(--bg); }
+    .screen-caption { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .screen-caption-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+    .screen-caption-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── IMPACT GRID ─────────────────────────────── */
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .impact-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px;
+    }
+    .impact-card.highlight { border-color: var(--accent); border-top: 3px solid var(--accent); }
+    .impact-number {
+      font-size: 32px; font-weight: 700; letter-spacing: -1px;
+      color: var(--text-primary); line-height: 1;
+    }
+    .impact-change {
+      display: inline-block; margin-top: 4px; margin-bottom: 4px;
+      font-size: 12px; font-weight: 600; padding: 2px 8px;
+      border-radius: 100px; background: #DCFCE7; color: #166534;
+    }
+    .impact-change.down { background: #FEF2F2; color: #991B1B; }
+    .impact-label { font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+    .impact-source { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-style: italic; }
+
+    /* ── WHAT'S NEXT ─────────────────────────────── */
+    .whats-next {
+      background: var(--text-primary); border-radius: var(--radius-lg);
+      padding: 28px 28px; margin-top: 8px;
+    }
+    .whats-next-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .next-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .next-item { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.55; }
+    .next-item::before { content: "→"; color: var(--accent); flex-shrink: 0; font-size: 13px; margin-top: 1px; font-weight: 600; }
+
+    /* ── SIDEBAR ─────────────────────────────────── */
+    .side-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 22px; margin-bottom: 16px;
+    }
+    .side-block-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px;
+    }
+    .side-row { display: flex; flex-direction: column; gap: 10px; }
+    .side-item-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .side-item-value { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+    .side-item-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+    .scope-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .scope-item {
+      display: flex; gap: 8px; align-items: flex-start;
+      font-size: 13px; color: var(--text-secondary); line-height: 1.45;
+    }
+    .scope-item::before { content: "→"; color: var(--text-muted); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+
+    /* Stat inline */
+    .stat-inline {
+      background: #F0FDFA; border-radius: var(--radius-sm);
+      padding: 12px 14px; margin-top: 8px;
+    }
+    .stat-inline-num { font-size: 22px; font-weight: 700; color: #134E4A; letter-spacing: -0.5px; }
+    .stat-inline-label { font-size: 12px; color: #0F766E; margin-top: 2px; }
+
+    /* ── PROJECT NAV ─────────────────────────────── */
+    .project-nav {
+      max-width: 1120px; margin: 0 auto;
+      padding: 48px 32px 80px;
+      display: flex; justify-content: space-between; gap: 16px;
+      border-top: 1px solid var(--border); margin-top: 64px;
+    }
+    .proj-nav-card {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px; text-decoration: none;
+      color: inherit; transition: all var(--transition); display: block; max-width: 280px;
+    }
+    .proj-nav-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .proj-nav-dir { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .proj-nav-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .proj-nav-card.next { text-align: right; margin-left: auto; }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 900px) {
+      .body-wrap { grid-template-columns: 1fr; gap: 0; }
+      .side-col { position: static; }
+      .impact-hero { grid-template-columns: 1fr 1fr; }
+      .impact-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hero, .cover-wrap, .body-wrap, .project-nav { padding-left: 20px; padding-right: 20px; }
+      .impact-hero { grid-template-columns: 1fr; }
+      .impact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-back">← Back to portfolio</a>
+      <span class="nav-label">Onboarding</span>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">noon · Seller Lab</div>
+      <h1>Seller Onboarding</h1>
+      <p class="hero-sub">
+        Redesigning the end-to-end flow that takes a new seller from sign-up to their first live product — and nearly doubling the number who made it through.
+      </p>
+      <div class="meta-row">
+        <span class="tag tag-shipped">✓ Shipped</span>
+        <span class="tag tag-web">Web</span>
+        <span class="tag tag-role">Solo lead</span>
+        <!-- PLACEHOLDER: Confirm year -->
+        <span class="tag tag-year">2024–2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COVER -->
+  <div class="cover-wrap">
+    <!-- PLACEHOLDER: Export the Onboarding cover from Figma (yeSdAMKYpUR0sdV8DW7RLP) and replace with:
+         <img class="cover-img" src="images/onboarding-cover.png" alt="Seller Onboarding" />
+    -->
+    <div class="cover-img" style="display:flex;align-items:center;justify-content:center;color:#5EEAD4;font-size:14px;font-weight:500;min-height:120px;">
+      📸 Export Onboarding cover from Figma → drop here as onboarding-cover.png
+    </div>
+    <p class="cover-caption">Seller Lab — Onboarding flow</p>
+  </div>
+
+  <div class="body-wrap">
+    <div class="main-col">
+
+      <!-- OVERVIEW -->
+      <div class="section">
+        <div class="section-label">Overview</div>
+        <p>
+          Every seller on noon starts here — creating their store, submitting documents,
+          passing KYC review, and eventually going live. For years this funnel had significant
+          drop-off at every stage: confusing document flows, opaque review status, no
+          in-context guidance, and a KYC bottleneck that drove the highest complaint volume
+          on the platform.
+        </p>
+        <p>
+          I led the UX redesign of the onboarding flow: store creation, LE document
+          submission, approval status visibility, and in-flow seller guidance. The work
+          also involved service design — surfacing and fixing the process gaps that no
+          amount of UI polish could hide.
+        </p>
+
+        <!-- Top-line impact numbers — all from the consolidated report -->
+        <div class="impact-hero">
+          <div class="impact-hero-card">
+            <div class="impact-hero-number">+96.9%</div>
+            <div class="impact-hero-label">More UAE sellers reaching live YoY</div>
+            <div class="impact-hero-sub">1,032 vs 524 — Jan 2026 cohort</div>
+          </div>
+          <div class="impact-hero-card">
+            <div class="impact-hero-number">+21.6pp</div>
+            <div class="impact-hero-label">UAE Store → LE Approved conversion</div>
+            <div class="impact-hero-sub">31.5% → 53.1% (Q1 YoY)</div>
+          </div>
+          <div class="impact-hero-card">
+            <div class="impact-hero-number">+9%</div>
+            <div class="impact-hero-label">CSAT improvement</div>
+            <div class="impact-hero-sub">3.03 → 3.31, detractors −12pp</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROBLEM -->
+      <div class="section">
+        <div class="section-label">The Problem</div>
+        <h2>Sellers were dropping out at every stage of the funnel</h2>
+        <p>
+          The onboarding flow had been built incrementally and showed it. Each stage had its
+          own friction — and the cumulative effect was that the majority of sellers who
+          created a store never made it to live.
+        </p>
+        <ul class="issue-list">
+          <li class="issue-item">
+            <div class="issue-icon">📄</div>
+            <div class="issue-text">
+              <strong>Confusing document submission</strong>
+              The LE (Legal Entity) approval flow had unclear field labels, missing guidance on
+              required document formats, and no feedback when something was wrong — leading to
+              repeated resubmissions and long wait times.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">🕐</div>
+            <div class="issue-text">
+              <strong>Opaque KYC review status</strong>
+              Sellers had no visibility into where their application was in review. The KYC
+              bottleneck was the loudest complaint in Q4 2025 — multi-week waits with no status
+              update, and agents giving conflicting information.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">🔍</div>
+            <div class="issue-text">
+              <strong>Guidance existed — but wasn't discoverable</strong>
+              Sellers rated negatively because they "didn't know where to apply" even though
+              all relevant links and instructions already existed on the platform. The gap
+              wasn't missing content — it was surfacing it at the right moment in the flow.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">📞</div>
+            <div class="issue-text">
+              <strong>Poor support reachability</strong>
+              Sellers needed human contact but the platform funnelled them into email-only support.
+              Free-text feedback showed sellers wanting callbacks and direct contact — a recurring
+              complaint across all markets.
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- PROCESS -->
+      <div class="section">
+        <div class="section-label">Process & Key Decisions</div>
+        <h2>Four design moves that shifted the funnel</h2>
+        <div class="decisions">
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 01</div>
+            <div class="decision-title">Redesign the LE submission flow around clarity, not completeness</div>
+            <div class="decision-body">
+              The document submission form tried to explain everything upfront — a wall of
+              instructions that sellers skipped. The redesign restructured it around progressive
+              disclosure: show what's needed, when it's needed, with inline validation rather
+              than end-of-form error dumps. Field labels were rewritten to match how sellers
+              actually describe their documents, not how the system categorised them.
+            </div>
+            <div class="decision-metric">
+              ↑ Store → LE Approved rate: 31.5% → 53.1% (+21.6pp) in UAE · Q1 YoY
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 02</div>
+            <div class="decision-title">Make review status visible and specific — not just "pending"</div>
+            <div class="decision-body">
+              Sellers in KYC review had no idea where they were or what to expect. The redesign
+              introduced a visible review status tracker with named stages, estimated timelines,
+              and a clear explanation of what happens next. Alongside the UI, an automated LE
+              aging escalation process was introduced — replacing a manual, error-prone workflow
+              where applications could sit unreviewed for weeks.
+            </div>
+            <div class="decision-metric">
+              ↑ CSAT: 3.03 → 3.31 (+9%) · Detractors: 45% → 33% (−12pp) · KYC complaints largely disappeared in Q1 2026
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 03</div>
+            <div class="decision-title">Surface guidance in-flow — don't send sellers to a help centre</div>
+            <div class="decision-body">
+              The insight from seller feedback was sharp: the problem wasn't that guidance
+              didn't exist, it was that sellers never found it when they needed it. The solution
+              was in-context — inline checklists, progress nudges, and contextual help at the
+              specific step where sellers were getting stuck. Rather than a "Help" link in the
+              nav, guidance appeared as part of the flow.
+            </div>
+            <div class="decision-metric">
+              Directly addresses the top discoverability complaint from seller CSAT free-text
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 04</div>
+            <div class="decision-title">Build a personalised seller dashboard to anchor the post-signup experience</div>
+            <div class="decision-body">
+              After store creation, sellers had no clear "what's next." The dashboard gave them
+              a personalised home — outstanding actions, document status, onboarding checklist,
+              and a seller guide tailored to their store type. This reduced the disorientation
+              that caused many sellers to abandon the process after initial sign-up.
+            </div>
+            <!-- PLACEHOLDER: Add specific metric if available, e.g. dashboard adoption or time-in-flow -->
+          </div>
+
+        </div>
+      </div>
+
+      <!-- THE WORK -->
+      <div class="section">
+        <div class="section-label">The Work</div>
+        <h2>Key screens</h2>
+        <div class="screens">
+
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export "Store creation + doc submission ✅" page cover from Figma
+                 <img class="screen-img" src="images/onboarding-store-creation.png" alt="Store creation flow" />
+            -->
+            <div class="screen-img" style="min-height:280px;display:flex;align-items:center;justify-content:center;background:#F0FDFA;color:#5EEAD4;font-size:13px;font-weight:500;">
+              📸 Store creation + doc submission — export from Figma Onboarding file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Store Creation & Document Submission</div>
+              <div class="screen-caption-desc">Redesigned LE submission flow with progressive disclosure, inline field guidance, and clear document requirements — the flow that drove the +21.6pp LE approval rate.</div>
+            </div>
+          </div>
+
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export the Dashboard page from Figma
+                 <img class="screen-img" src="images/onboarding-dashboard.png" alt="Seller dashboard" />
+            -->
+            <div class="screen-img" style="min-height:260px;display:flex;align-items:center;justify-content:center;background:#F0FDFA;color:#5EEAD4;font-size:13px;font-weight:500;">
+              📸 Seller Dashboard — export from Figma Onboarding file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Personalised Seller Dashboard</div>
+              <div class="screen-caption-desc">Post-signup home showing outstanding actions, approval status, onboarding checklist, and a tailored seller guide — reducing the abandonment that happened when sellers didn't know what to do next.</div>
+            </div>
+          </div>
+
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export the Seller Guide page from Figma
+                 <img class="screen-img" src="images/onboarding-guide.png" alt="Seller guide" />
+            -->
+            <div class="screen-img" style="min-height:240px;display:flex;align-items:center;justify-content:center;background:#F0FDFA;color:#5EEAD4;font-size:13px;font-weight:500;">
+              📸 Seller Guide — export from Figma Onboarding file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">In-Flow Seller Guide</div>
+              <div class="screen-caption-desc">Contextual guidance surfaced at the point of need — not in a separate help centre. The design response to the "guidance exists but isn't discoverable" finding.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- IMPACT -->
+      <div class="section">
+        <div class="section-label">Impact & Outcomes</div>
+        <h2>The funnel moved — measurably</h2>
+        <p>All figures are from the noon Merchant Onboarding consolidated report (May 2026), comparing Q1 2026 to Q1 2025.</p>
+
+        <div class="impact-grid">
+          <div class="impact-card highlight">
+            <div class="impact-number">+96.9%</div>
+            <div class="impact-change">↑ YoY</div>
+            <div class="impact-label">UAE stores reaching live — Jan 2026 cohort (1,032 vs 524)</div>
+            <div class="impact-source">Jan 2026 cohort, fully mature</div>
+          </div>
+          <div class="impact-card highlight">
+            <div class="impact-number">+49.2%</div>
+            <div class="impact-change">↑ YoY</div>
+            <div class="impact-label">Total stores going live in UAE — Q1 2026 vs Q1 2025 (2,414 vs 1,618)</div>
+            <div class="impact-source">Q1 2026 vs Q1 2025</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">53.1%</div>
+            <div class="impact-change">+21.6pp</div>
+            <div class="impact-label">Store → LE Approved conversion in UAE (was 31.5%)</div>
+            <div class="impact-source">Q1 YoY</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">39.1%</div>
+            <div class="impact-change">+14.5pp</div>
+            <div class="impact-label">Store → QC Passed conversion in UAE (was 24.6%)</div>
+            <div class="impact-source">Q1 YoY</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">3.31</div>
+            <div class="impact-change">+9%</div>
+            <div class="impact-label">CSAT score — Q1 2026 (was 3.03 in Q4 2025)</div>
+            <div class="impact-source">67 responses</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">−12pp</div>
+            <div class="impact-change">↓ Detractors</div>
+            <div class="impact-label">Detractor rate fell from 45% to 33% — KYC complaints largely disappeared</div>
+            <div class="impact-source">Q4 2025 → Q1 2026</div>
+          </div>
+        </div>
+
+        <p style="margin-top: 20px;">
+          KSA also showed strong improvement — store-to-live conversion went from 12.8% to 27.0%
+          (+14.1pp YoY), with stores live up 58.6%. Egypt improved conversion efficiency (12.0% vs 7.8%)
+          despite lower top-of-funnel volume.
+        </p>
+      </div>
+
+      <!-- WHAT'S NEXT -->
+      <div class="section">
+        <div class="section-label">What's next</div>
+        <h2>The onboarding funnel improved — post-live is the new frontier</h2>
+        <p>
+          The data tells a clear story: more sellers are completing onboarding, but fewer
+          are making their first sale. In UAE, first-sale conversion declined from 16.1% to 10.9%
+          (−5.3pp), and LTV3 per store fell from AED 4,072 to AED 2,515 (−38%). The design
+          problem has shifted from "getting sellers live" to "getting live sellers selling."
+        </p>
+        <div class="whats-next">
+          <div class="whats-next-title">Open design problems from the data</div>
+          <ul class="next-list">
+            <li class="next-item">Post-live seller visibility and discovery — organic visibility for long-tail sellers lags behind competitors</li>
+            <li class="next-item">Chinese-language seller UX — opaque rejection reasons, missing field labels (PRJ/ORG numbers), no CN-language support layer; drove CSAT to 2.79 in partial Q2 data</li>
+            <li class="next-item">First-sale conversion — onboarding is smoother but post-live monetisation support lags the funnel improvements</li>
+            <li class="next-item">Support reachability — sellers want callbacks and direct contact, not email-only; consistently the #1 pain point in free-text feedback</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="side-col">
+      <div class="side-block">
+        <div class="side-block-title">Project details</div>
+        <div class="side-row">
+          <div class="side-item">
+            <div class="side-item-label">Company</div>
+            <div class="side-item-value">noon</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Product</div>
+            <div class="side-item-value">Seller Lab — Onboarding</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Platform</div>
+            <div class="side-item-value">Web</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Status</div>
+            <div class="side-item-value" style="color:#166534;">✓ Shipped</div>
+          </div>
+          <div class="side-item">
+            <!-- PLACEHOLDER: Confirm year range -->
+            <div class="side-item-label">Year</div>
+            <div class="side-item-value">2024–2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-title">My role</div>
+        <div class="side-row">
+          <div class="side-item">
+            <div class="side-item-label">Title</div>
+            <!-- PLACEHOLDER: Confirm title at time -->
+            <div class="side-item-value">Product Design Lead</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Ownership</div>
+            <div class="side-item-value">Solo lead</div>
+            <div class="side-item-sub">Initial design; others have continued to build on the work</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-title">What I owned</div>
+        <ul class="scope-list">
+          <li class="scope-item">End-to-end UX of the onboarding funnel</li>
+          <li class="scope-item">LE document submission flow redesign</li>
+          <li class="scope-item">Review status visibility system</li>
+          <li class="scope-item">In-flow guidance and seller guide</li>
+          <li class="scope-item">Personalised seller dashboard</li>
+          <li class="scope-item">Personalisation questionnaire</li>
+          <!-- PLACEHOLDER: Add anything else — e.g. "Seller research sessions", "Stakeholder alignment" -->
+        </ul>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-title">Data source</div>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.55;">
+          All metrics from the noon Merchant Onboarding & Seller Feedback Consolidated Report
+          (6 emails from Robert O'Kirwan, May 2026). Impact figures compare Q1 2026 to Q1 2025.
+        </p>
+        <div class="stat-inline">
+          <div class="stat-inline-num">+49.2%</div>
+          <div class="stat-inline-label">More UAE sellers going live — Q1 2026 vs Q1 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-nav">
+    <a class="proj-nav-card" href="da-app.html">
+      <div class="proj-nav-dir">← Previous</div>
+      <div class="proj-nav-title">Noon Food — Delivery Agent App</div>
+    </a>
+    <a class="proj-nav-card next" href="catalog.html">
+      <div class="proj-nav-dir">Next →</div>
+      <div class="proj-nav-title">Catalog Redesign</div>
+    </a>
+  </div>
+
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>new Lenis({ autoRaf: true, autoToggle: true, anchors: true, allowNestedScroll: true });</script>
+</body>
+</html>

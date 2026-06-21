@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catalog Redesign — Sara Ismail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F8F8F6;
+      --surface: #FFFFFF;
+      --border: #E4E4E0;
+      --text-primary: #111110;
+      --text-secondary: #6B6B68;
+      --text-muted: #9B9B98;
+      --accent: #1A56DB;
+      --accent-bg: #EFF6FF;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* scroll-behavior handled by Lenis */
+
+    body {
+      font-family: 'Google Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(248,248,246,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; transition: color var(--transition);
+    }
+    .nav-back:hover { color: var(--text-primary); }
+    .nav-label { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(160deg, #EFF6FF 0%, #DBEAFE 60%, #BFDBFE 100%);
+      padding: 72px 32px 64px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-inner { max-width: 1120px; margin: 0 auto; }
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: #1D4ED8; margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px); font-weight: 700;
+      letter-spacing: -1.5px; line-height: 1.08;
+      color: #1E3A5F; margin-bottom: 16px; max-width: 700px;
+    }
+    .hero-sub {
+      font-size: 17px; color: #3B5998; max-width: 560px;
+      line-height: 1.7; margin-bottom: 28px;
+    }
+    .meta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag {
+      display: inline-flex; align-items: center;
+      padding: 4px 12px; border-radius: 100px;
+      font-size: 12px; font-weight: 500;
+    }
+    .tag-shipped  { background: #DCFCE7; color: #166534; }
+    .tag-web      { background: #EFF6FF; color: #1E40AF; }
+    .tag-role     { background: rgba(255,255,255,0.7); color: #475569; }
+    .tag-year     { background: rgba(255,255,255,0.7); color: #64748B; }
+
+    /* ── COVER IMAGE ─────────────────────────────── */
+    .cover-wrap {
+      max-width: 1120px; margin: 0 auto;
+      padding: 48px 32px 0;
+    }
+    .cover-img {
+      width: 100%; border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+      display: block;
+      background: #EFF6FF;
+      /* PLACEHOLDER: Remove min-height once image is set */
+      min-height: 120px;
+    }
+    .cover-caption {
+      font-size: 13px; color: var(--text-muted);
+      text-align: center; margin-top: 12px;
+    }
+
+    /* ── BODY ────────────────────────────────────── */
+    .body-wrap {
+      max-width: 1120px; margin: 0 auto;
+      padding: 64px 32px 0;
+      display: grid;
+      grid-template-columns: 680px 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .main-col {}
+    .side-col { position: sticky; top: 80px; }
+
+    /* ── SECTION ─────────────────────────────────── */
+    .section { margin-bottom: 64px; }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+      color: var(--text-primary); margin-bottom: 16px; line-height: 1.25;
+    }
+    .section p {
+      font-size: 16px; color: var(--text-secondary);
+      line-height: 1.75; margin-bottom: 14px;
+    }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* ── ISSUE LIST ──────────────────────────────── */
+    .issue-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .issue-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+    }
+    .issue-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: #FEF2F2; display: flex; align-items: center;
+      justify-content: center; font-size: 13px; flex-shrink: 0;
+    }
+    .issue-text { font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
+    .issue-text strong { display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 2px; }
+
+    /* ── DECISION CARDS ──────────────────────────── */
+    .decisions { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .decision-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px 22px;
+      border-left: 3px solid var(--accent);
+    }
+    .decision-number {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+    }
+    .decision-title {
+      font-size: 15px; font-weight: 650; color: var(--text-primary);
+      margin-bottom: 8px; line-height: 1.3;
+    }
+    .decision-body {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.65;
+    }
+
+    /* ── BEFORE / AFTER ──────────────────────────── */
+    .before-after {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-top: 8px;
+    }
+    .ba-card {
+      border-radius: var(--radius-md); overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .ba-label {
+      padding: 10px 16px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .ba-label-before { background: #FEF2F2; color: #991B1B; }
+    .ba-label-after  { background: #DCFCE7; color: #166534; }
+    .ba-img {
+      width: 100%; display: block; background: #F1F5F9;
+      /* PLACEHOLDER: Set min-height to 0 once image is placed */
+      min-height: 180px;
+    }
+
+    /* ── SCREENS ─────────────────────────────────── */
+    .screens { margin-top: 8px; display: flex; flex-direction: column; gap: 16px; }
+    .screen-card {
+      border-radius: var(--radius-md); overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .screen-img {
+      width: 100%; display: block;
+      background: var(--bg);
+    }
+    .screen-caption {
+      padding: 14px 18px; border-top: 1px solid var(--border);
+    }
+    .screen-caption-title {
+      font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px;
+    }
+    .screen-caption-desc {
+      font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+    }
+
+    /* ── IMPACT ──────────────────────────────────── */
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+    .impact-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px;
+    }
+    .impact-number {
+      font-size: 32px; font-weight: 700; letter-spacing: -1px;
+      color: var(--text-primary); line-height: 1;
+    }
+    .impact-label {
+      font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.45;
+    }
+    .impact-placeholder {
+      font-size: 13px; color: var(--text-muted); font-style: italic;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────── */
+    .side-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 22px;
+      margin-bottom: 16px;
+    }
+    .side-block-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px;
+    }
+    .side-row { display: flex; flex-direction: column; gap: 10px; }
+    .side-item { }
+    .side-item-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .side-item-value { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+    .side-item-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+
+    .scope-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .scope-item {
+      display: flex; gap: 8px; align-items: flex-start;
+      font-size: 13px; color: var(--text-secondary); line-height: 1.45;
+    }
+    .scope-item::before { content: "→"; color: var(--text-muted); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+
+    /* ── PROJECT NAV ─────────────────────────────── */
+    .project-nav {
+      max-width: 1120px; margin: 0 auto;
+      padding: 48px 32px 80px;
+      display: flex; justify-content: space-between; gap: 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 64px;
+    }
+    .proj-nav-card {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px; text-decoration: none;
+      color: inherit; transition: all var(--transition);
+      display: block; max-width: 280px;
+    }
+    .proj-nav-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .proj-nav-dir { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .proj-nav-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .proj-nav-card.next { text-align: right; margin-left: auto; }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 900px) {
+      .body-wrap { grid-template-columns: 1fr; gap: 0; }
+      .side-col { position: static; }
+      .before-after { grid-template-columns: 1fr; }
+      .impact-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 48px 20px 40px; }
+      .cover-wrap, .body-wrap, .project-nav { padding-left: 20px; padding-right: 20px; }
+      .impact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-back">← Back to portfolio</a>
+      <span class="nav-label">Catalog</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">noon · Seller Lab</div>
+      <h1>Catalog Redesign</h1>
+      <p class="hero-sub">
+        Redesigning the core tool sellers use to manage their entire product catalogue —
+        from listing to visibility, pricing to fulfilment.
+      </p>
+      <div class="meta-row">
+        <span class="tag tag-shipped">✓ Shipped</span>
+        <span class="tag tag-web">Web</span>
+        <span class="tag tag-role">Mainly solo</span>
+        <!-- PLACEHOLDER: Add the year this shipped -->
+        <span class="tag tag-year">2023–2024</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COVER IMAGE -->
+  <div class="cover-wrap">
+    <!-- PLACEHOLDER: Export the "CAT New DS" frame from the PLP page and replace with:
+         <img class="cover-img" src="images/catalog-cover.png" alt="Catalog redesign — new PLP" />
+    -->
+    <div class="cover-img" style="display:flex;align-items:center;justify-content:center;color:#93C5FD;font-size:14px;font-weight:500;">
+      📸 Export "CAT New DS" frame from Figma PLP page → drop here as catalog-cover.png
+    </div>
+    <p class="cover-caption">New Partner Catalog — Product Listing Page</p>
+  </div>
+
+  <!-- BODY -->
+  <div class="body-wrap">
+
+    <!-- MAIN COLUMN -->
+    <div class="main-col">
+
+      <!-- OVERVIEW -->
+      <div class="section">
+        <div class="section-label">Overview</div>
+        <p>
+          The Catalog tool is how sellers on noon manage every product they sell —
+          viewing status, editing prices, checking stock, understanding QC issues, and pushing
+          products live. For sellers managing hundreds or thousands of SKUs, it is one of the
+          most business-critical pages they open every day.
+        </p>
+        <p>
+          The tool had been built incrementally over time and had accumulated serious usability debt.
+          I led the redesign of the three core surfaces: the Product Listing Page (PLP),
+          the Product Detail Page / SKU editor (PDP), and the Virtual Bundles (VBs) tool.
+        </p>
+      </div>
+
+      <!-- PROBLEM -->
+      <div class="section">
+        <div class="section-label">The Problem</div>
+        <h2>A tool that had grown beyond itself</h2>
+        <p>
+          As noon's seller base grew and the platform expanded across multiple fulfilment
+          methods, the Catalog tool couldn't keep up. Sellers managing large catalogues
+          were spending significant time on tasks that should have been instant — and
+          often couldn't understand why their products weren't live.
+        </p>
+        <ul class="issue-list">
+          <li class="issue-item">
+            <div class="issue-icon">👁</div>
+            <div class="issue-text">
+              <strong>Poor visual hierarchy</strong>
+              Products were difficult to scan at a glance. Status, price, and stock were visually equal — nothing surfaced what needed attention.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">🔍</div>
+            <div class="issue-text">
+              <strong>Buried filters and actions</strong>
+              Core functionality — filters, saved filter views, and export — were hard to find or visually deprioritised, slowing down daily workflows.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">❓</div>
+            <div class="issue-text">
+              <strong>Unclear product issues</strong>
+              QC rejections and inactive statuses were mixed together with no clear indication of why a product wasn't live or what action to take.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">📤</div>
+            <div class="issue-text">
+              <strong>No export capability</strong>
+              Sellers had no way to export their SKU data despite a frequent operational need to audit pricing, stock, or issues externally.
+            </div>
+          </li>
+          <li class="issue-item">
+            <div class="issue-icon">🔀</div>
+            <div class="issue-text">
+              <strong>Mixed fulfilment methods</strong>
+              FBN (Fulfilled by Noon) and FBP (Fulfilled by Partner) followed different rules and workflows but were collapsed into a single table, creating constant confusion.
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- PROCESS -->
+      <div class="section">
+        <div class="section-label">Process & Key Decisions</div>
+        <h2>Where the real design work happened</h2>
+        <p>
+          The redesign wasn't just a visual refresh — several structural decisions had to be made
+          before a single pixel was placed. Here are the ones that shaped the outcome most.
+        </p>
+        <div class="decisions">
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 01</div>
+            <div class="decision-title">Separate FBN and FBP data within the same row — don't split into different views</div>
+            <div class="decision-body">
+              Early explorations showed splitting fulfilment methods into separate tabs. But sellers often
+              manage the same product across both channels and need to compare them. The solution was to
+              show FBN and FBP as sub-rows within the same product entry — keeping context intact while
+              making the rules-of-each crystal clear.
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 02</div>
+            <div class="decision-title">Surface performance data (sales, views, units sold) directly in the listing</div>
+            <div class="decision-body">
+              Sellers were navigating away from the catalog to check performance data in a separate
+              section. Bringing Sales, Units Sold, and Views into the table row meant sellers could
+              triage their catalogue — identifying underperforming products without leaving the page.
+              <!-- PLACEHOLDER: Add if this caused any table density debates or trade-offs -->
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 03</div>
+            <div class="decision-title">Replace status tags with actionable indicators — not just labels</div>
+            <div class="decision-body">
+              "Not Live" alone tells a seller nothing useful. The redesign tied status tags to
+              issue counts (e.g. "Not live · 2 issues") with a direct "View issues" link —
+              turning a label into a starting point for resolution. Live products also showed
+              contextual signals like "Buy Box Won" or "Buy Box Lost".
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 04</div>
+            <div class="decision-title">Add pricing method context as inline tags, not just a number</div>
+            <div class="decision-body">
+              A price alone doesn't explain whether it's manually set, driven by the pricing engine,
+              part of a sale, or a deal. Adding pricing method tags (Manual, Pricing Engine, Sale, Deal)
+              gave sellers the context to understand whether a price was intentional or system-driven —
+              reducing unnecessary edits and support tickets.
+              <!-- PLACEHOLDER: Add any data on how many pricing support tickets this impacted -->
+            </div>
+          </div>
+
+          <div class="decision-card">
+            <div class="decision-number">Decision 05</div>
+            <div class="decision-title">Introduce Filter Views as saved, reusable filter states</div>
+            <div class="decision-body">
+              Power sellers run the same filter combinations daily (e.g. "Show only Not Live FBN
+              products with QC issues"). Rather than rebuilding these each session, Filter Views
+              let sellers save and reuse named filter states — a feature that had been consistently
+              requested but never built.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- THE WORK -->
+      <div class="section">
+        <div class="section-label">The Work</div>
+        <h2>Key screens</h2>
+
+        <div class="screens">
+
+          <!-- Screen 1: New PLP -->
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export "CAT New DS" frame from Figma → save as images/catalog-plp-new.png
+                 Then replace the div below with: <img class="screen-img" src="images/catalog-plp-new.png" alt="New PLP" />
+            -->
+            <div class="screen-img" style="min-height:300px;display:flex;align-items:center;justify-content:center;background:#EFF6FF;color:#93C5FD;font-size:13px;font-weight:500;">
+              📸 New PLP — "CAT New DS" frame from Figma
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Redesigned Product Listing Page</div>
+              <div class="screen-caption-desc">FBN/FBP split per row, inline performance data, actionable status tags, pricing method context, and Export in the toolbar.</div>
+            </div>
+          </div>
+
+          <!-- Before / After -->
+          <div>
+            <div class="section-label" style="margin-bottom:12px;">Before & After</div>
+            <div class="before-after">
+              <div class="ba-card">
+                <div class="ba-label ba-label-before">Before</div>
+                <!-- PLACEHOLDER: Export old PLP screen → save as images/catalog-plp-old.png
+                     Replace div with: <img class="ba-img" src="images/catalog-plp-old.png" alt="Old PLP" />
+                -->
+                <div class="ba-img" style="display:flex;align-items:center;justify-content:center;color:#FCA5A5;font-size:12px;font-weight:500;padding:20px;text-align:center;">
+                  📸 Old PLP — export from "PLP old" section in Figma
+                </div>
+              </div>
+              <div class="ba-card">
+                <div class="ba-label ba-label-after">After</div>
+                <!-- PLACEHOLDER: Use same as catalog-plp-new.png -->
+                <div class="ba-img" style="display:flex;align-items:center;justify-content:center;color:#86EFAC;font-size:12px;font-weight:500;padding:20px;text-align:center;">
+                  📸 New PLP — same as cover screen above
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 2: Filters panel -->
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export the filter panel / advanced filters screen from Figma PLP page
+                 <img class="screen-img" src="images/catalog-filters.png" alt="Advanced filters" />
+            -->
+            <div class="screen-img" style="min-height:220px;display:flex;align-items:center;justify-content:center;background:#F8FAFF;color:#93C5FD;font-size:13px;font-weight:500;">
+              📸 Filter Views panel — export from Figma PLP page
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Advanced Filters & Saved Filter Views</div>
+              <div class="screen-caption-desc">Sellers can filter by status, QC state, fulfilment method, stock level, brand, and category — and save combinations as named views for reuse.</div>
+            </div>
+          </div>
+
+          <!-- Screen 3: PDP -->
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export a key PDP screen from the "PDP (SKU)" page in Figma
+                 <img class="screen-img" src="images/catalog-pdp.png" alt="Product Detail Page" />
+            -->
+            <div class="screen-img" style="min-height:260px;display:flex;align-items:center;justify-content:center;background:#F8FAFF;color:#93C5FD;font-size:13px;font-weight:500;">
+              📸 Product Detail / SKU Editor — export from "PDP (SKU)" page in Figma
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Product Detail Page (SKU Editor)</div>
+              <div class="screen-caption-desc">Redesigned SKU editing experience covering product info, pricing, stock, images, and QC resolution — with clear section structure and inline validation.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- IMPACT -->
+      <div class="section">
+        <div class="section-label">Impact & Outcomes</div>
+        <h2>What changed</h2>
+        <p>
+          The redesign shipped and is in active use by sellers across noon's markets.
+          <!-- PLACEHOLDER: Add any specific outcome: "Seller satisfaction score improved from X to Y"
+               or "Support tickets related to catalog dropped by X%" or "Adoption of export feature reached X%"
+          -->
+        </p>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Replace with a real metric if you have one -->
+            <div class="impact-number">✓</div>
+            <div class="impact-label">Shipped and in active use across all noon markets</div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Add a metric here, e.g. "First time export was available to sellers" -->
+            <div class="impact-number">1st</div>
+            <div class="impact-label">First time sellers had a native export capability in the Catalog tool</div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Add metric, e.g. "Reduced time-to-resolution for Not Live products" -->
+            <div class="impact-number">↓</div>
+            <div class="impact-label impact-placeholder">
+              <!-- PLACEHOLDER: e.g. "Reduced catalog-related support tickets" or time-to-fix metric -->
+              Add impact metric here
+            </div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Any qualitative outcome — e.g. seller NPS improvement, ops team feedback -->
+            <div class="impact-number">↑</div>
+            <div class="impact-label impact-placeholder">
+              <!-- PLACEHOLDER: e.g. "Seller satisfaction" or "Task completion rate" -->
+              Add outcome or qualitative result here
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="side-col">
+
+      <div class="side-block">
+        <div class="side-block-title">Project details</div>
+        <div class="side-row">
+          <div class="side-item">
+            <div class="side-item-label">Company</div>
+            <div class="side-item-value">noon</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Product</div>
+            <div class="side-item-value">Seller Lab — Catalog</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Platform</div>
+            <div class="side-item-value">Web</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Status</div>
+            <div class="side-item-value" style="color:#166534;">✓ Shipped</div>
+          </div>
+          <div class="side-item">
+            <!-- PLACEHOLDER: Add the year(s) you worked on this -->
+            <div class="side-item-label">Year</div>
+            <div class="side-item-value">2023–2024</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-title">My role</div>
+        <div class="side-row">
+          <div class="side-item">
+            <div class="side-item-label">Title</div>
+            <!-- PLACEHOLDER: Update with your actual title at the time -->
+            <div class="side-item-value">Product Design Lead</div>
+          </div>
+          <div class="side-item">
+            <div class="side-item-label">Ownership</div>
+            <div class="side-item-value">Mainly solo</div>
+            <div class="side-item-sub">Design system components built in collaboration with the DS team</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-title">What I owned</div>
+        <ul class="scope-list">
+          <li class="scope-item">End-to-end UX of the PLP, PDP, and Virtual Bundles</li>
+          <li class="scope-item">Information architecture and table structure decisions</li>
+          <li class="scope-item">FBN / FBP separation model</li>
+          <li class="scope-item">Filter system design and Filter Views feature</li>
+          <li class="scope-item">Status and issue surfacing system</li>
+          <li class="scope-item">Export feature design</li>
+          <li class="scope-item">Design system component spec for the Catalog table</li>
+          <!-- PLACEHOLDER: Add anything else you owned — e.g. "Stakeholder alignment", "User research sessions" -->
+        </ul>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-title">Surfaces designed</div>
+        <ul class="scope-list">
+          <li class="scope-item">Product Listing Page (PLP)</li>
+          <li class="scope-item">Product Detail Page / SKU Editor (PDP)</li>
+          <li class="scope-item">Virtual Bundles (VBs)</li>
+          <li class="scope-item">Fees Calculator</li>
+          <li class="scope-item">Advanced Filters panel</li>
+          <li class="scope-item">Filter Views management</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROJECT NAV -->
+  <div class="project-nav">
+    <a class="proj-nav-card" href="onboarding.html">
+      <div class="proj-nav-dir">← Previous</div>
+      <div class="proj-nav-title">Seller Lab — Onboarding</div>
+    </a>
+    <a class="proj-nav-card next" href="navigation.html">
+      <div class="proj-nav-dir">Next →</div>
+      <div class="proj-nav-title">Navigation Redesign</div>
+    </a>
+  </div>
+
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>new Lenis({ autoRaf: true, autoToggle: true, anchors: true, allowNestedScroll: true });</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sellerside Design System — Sara Ismail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #F8F8F6; --surface: #FFFFFF; --border: #E4E4E0; --text-primary: #111110; --text-secondary: #6B6B68; --text-muted: #9B9B98; --accent: #0F172A; --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
+    /* scroll-behavior handled by Lenis */
+    body { font-family: 'Google Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(248,248,246,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 32px; }
+    .nav-inner { max-width: 1120px; margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-back { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color var(--transition); }
+    .nav-back:hover { color: var(--text-primary); }
+    .nav-label { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+    .hero { background: linear-gradient(160deg, #F8F9FA 0%, #F1F5F9 60%, #E2E8F0 100%); padding: 72px 32px 64px; border-bottom: 1px solid var(--border); }
+    .hero-inner { max-width: 1120px; margin: 0 auto; }
+    .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #475569; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.08; color: #0F172A; margin-bottom: 16px; max-width: 700px; }
+    .hero-sub { font-size: 17px; color: #475569; max-width: 560px; line-height: 1.7; margin-bottom: 28px; }
+    .meta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+    .tag-shipped { background: #DCFCE7; color: #166534; } .tag-ds { background: #F5F3FF; color: #4C1D95; } .tag-role { background: #F1F5F9; color: #475569; } .tag-year { background: #F1F5F9; color: #64748B; }
+    .cover-wrap { max-width: 1120px; margin: 0 auto; padding: 48px 32px 0; }
+    .cover-img { width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.08); display: block; min-height: 120px; background: #F1F5F9; }
+    .cover-caption { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 12px; }
+    .body-wrap { max-width: 1120px; margin: 0 auto; padding: 64px 32px 0; display: grid; grid-template-columns: 680px 1fr; gap: 80px; align-items: start; }
+    .side-col { position: sticky; top: 80px; }
+    .section { margin-bottom: 64px; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+    .section h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 16px; line-height: 1.25; }
+    .section p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 14px; }
+    .section p:last-child { margin-bottom: 0; }
+    .foundations-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+    .foundation-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+    .foundation-icon { font-size: 18px; margin-bottom: 6px; } .foundation-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .component-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .component-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 100px; padding: 4px 12px; font-size: 13px; color: var(--text-secondary); }
+    .decisions { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; border-left: 3px solid #0F172A; }
+    .decision-number { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
+    .decision-title { font-size: 15px; font-weight: 650; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+    .decision-body { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+    .screens { margin-top: 8px; display: flex; flex-direction: column; gap: 16px; }
+    .screen-card { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+    .screen-img { width: 100%; display: block; background: var(--bg); }
+    .screen-caption { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .screen-caption-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+    .screen-caption-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .impact-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; }
+    .impact-number { font-size: 30px; font-weight: 700; letter-spacing: -1px; color: var(--text-primary); line-height: 1; }
+    .impact-label { font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.45; }
+    .side-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; margin-bottom: 16px; }
+    .side-block-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    .side-row { display: flex; flex-direction: column; gap: 10px; }
+    .side-item-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .side-item-value { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+    .side-item-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+    .scope-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .scope-item { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+    .scope-item::before { content: "→"; color: var(--text-muted); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+    .project-nav { max-width: 1120px; margin: 0 auto; padding: 48px 32px 80px; display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border); margin-top: 64px; }
+    .proj-nav-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; text-decoration: none; color: inherit; transition: all var(--transition); display: block; max-width: 280px; }
+    .proj-nav-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .proj-nav-dir { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .proj-nav-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .proj-nav-card.next { text-align: right; margin-left: auto; }
+    @media (max-width: 900px) { .body-wrap { grid-template-columns: 1fr; gap: 0; } .side-col { position: static; } .foundations-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .hero, .cover-wrap, .body-wrap, .project-nav { padding-left: 20px; padding-right: 20px; } .foundations-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav><div class="nav-inner"><a href="index.html" class="nav-back">← Back to portfolio</a><span class="nav-label">Sellerside DS</span></div></nav>
+
+  <div class="hero"><div class="hero-inner">
+    <div class="hero-eyebrow">noon · Seller Lab</div>
+    <h1>Sellerside Design System</h1>
+    <p class="hero-sub">Built the design system that underpins noon's entire seller-facing product — foundations, tokens, and 20+ production-ready components.</p>
+    <div class="meta-row">
+      <span class="tag tag-shipped">✓ Shipped</span>
+      <span class="tag tag-ds">Design System</span>
+      <span class="tag tag-role">Mainly solo</span>
+      <span class="tag tag-year"><!-- PLACEHOLDER -->2023–2024</span>
+    </div>
+  </div></div>
+
+  <div class="cover-wrap">
+    <!-- PLACEHOLDER: Export the Sellerside DS thumbnail from Figma (nTKAkowOpxrf5K2UjbTPgM — it's a great cover, use it)
+         <img class="cover-img" src="images/sellerside-ds-cover.png" alt="Sellerside Design System" /> -->
+    <div class="cover-img" style="display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:14px;font-weight:500;min-height:180px;">
+      📸 Export "✨ Thumbnail" from Figma Sellerside DS file → sellerside-ds-cover.png
+    </div>
+    <p class="cover-caption">Sellerside — noon Design System</p>
+  </div>
+
+  <div class="body-wrap">
+    <div class="main-col">
+
+      <div class="section">
+        <div class="section-label">Overview</div>
+        <p>A design system isn't just a component library — it's the foundation that determines how fast a product team can move and how consistent the product feels to its users. For noon's seller-facing products, that consistency was missing.</p>
+        <p>I built the Sellerside design system from the ground up: establishing design tokens and foundations, then building out a full component library used by both designers and engineers across the Seller Lab product.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">The Problem</div>
+        <h2>A growing product without a shared foundation</h2>
+        <p>As the Seller Lab product grew — Catalog, Onboarding, Navigation, and more — design inconsistencies accumulated. Different parts of the product used different spacing, colours, and component patterns. Designers were recreating the same elements from scratch, and engineers were implementing multiple versions of the same component.</p>
+        <p>Every new feature added to the debt. There was no single source of truth.
+        <!-- PLACEHOLDER: Add any specific pain point — e.g. "number of duplicate components found" or "time lost per sprint" --></p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">What I built</div>
+        <h2>Foundations + 20+ components</h2>
+        <p>The system covers two layers: design foundations (the tokens and rules) and a production component library.</p>
+        <div class="foundations-grid">
+          <div class="foundation-card"><div class="foundation-icon">🎨</div><div class="foundation-title">Colours</div></div>
+          <div class="foundation-card"><div class="foundation-icon">Aa</div><div class="foundation-title">Typography</div></div>
+          <div class="foundation-card"><div class="foundation-icon">✦</div><div class="foundation-title">Icons</div></div>
+          <div class="foundation-card"><div class="foundation-icon">▦</div><div class="foundation-title">Layout & Grid</div></div>
+          <div class="foundation-card"><div class="foundation-icon">◻</div><div class="foundation-title">Spacing & Shadow</div></div>
+          <div class="foundation-card"><div class="foundation-icon">⌀</div><div class="foundation-title">Border Radius</div></div>
+        </div>
+        <div style="margin-top: 24px;">
+          <div class="section-label">Component library</div>
+          <div class="component-list">
+            <span class="component-chip">Buttons</span><span class="component-chip">Badges</span><span class="component-chip">Alerts</span><span class="component-chip">Banners</span><span class="component-chip">Tabs</span><span class="component-chip">File Uploader</span><span class="component-chip">Empty States</span><span class="component-chip">Tour / Tutorial</span><span class="component-chip">Tooltip</span><span class="component-chip">Input Field</span><span class="component-chip">Table</span><span class="component-chip">Checkbox</span><span class="component-chip">Progress</span><span class="component-chip">Stepper</span><span class="component-chip">Combo Box</span><span class="component-chip">Navigation</span><span class="component-chip">Pagination</span><span class="component-chip">Avatar</span><span class="component-chip">Chip</span><span class="component-chip">Switch</span><span class="component-chip">Toggle Button</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Process & Key Decisions</div>
+        <h2>Building something teams will actually use</h2>
+        <div class="decisions">
+          <div class="decision-card">
+            <div class="decision-number">Decision 01</div>
+            <div class="decision-title">Audit first — don't start from scratch if you don't need to</div>
+            <div class="decision-body">Before designing a single new component, I audited what existed across the product. Many elements were consistent enough to standardise rather than replace — which reduced the disruption of adoption and gave teams familiar components to start from.
+            <!-- PLACEHOLDER: Add any detail about the audit process or findings --></div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 02</div>
+            <div class="decision-title">Document usage intent, not just spec — components need to explain themselves</div>
+            <div class="decision-body">A component without documented usage guidance gets misused. Every component was shipped with variant documentation, do/don't usage examples, and notes on when to use it vs. an alternative. The goal was to reduce designer-to-engineer back-and-forth.</div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 03</div>
+            <div class="decision-title">Prioritise the components that appear most — table, input, and navigation first</div>
+            <div class="decision-body">Rather than building the full library before releasing anything, I prioritised components by frequency of use across the product. Table, Input Field, and Navigation were built and adopted first — they appeared in nearly every flow — before moving to lower-frequency components.</div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 04</div>
+            <div class="decision-title">Maintain a change log — systems break silently without one</div>
+            <div class="decision-body">Every update to the system was tracked in a structured change log with version notes, what changed, and what it affects. This let teams know when to update their designs and gave engineers a clear reference when implementation diverged from the Figma spec.
+            <!-- PLACEHOLDER: Add detail about how the change log was used or its adoption --></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">The Work</div>
+        <h2>Key screens</h2>
+        <div class="screens">
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export the Components page or a specific component spread from Figma (nTKAkowOpxrf5K2UjbTPgM)
+                 <img class="screen-img" src="images/ds-components.png" alt="Components" /> -->
+            <div class="screen-img" style="min-height:280px;display:flex;align-items:center;justify-content:center;background:#F8F9FA;color:#94A3B8;font-size:13px;font-weight:500;">
+              📸 Component library overview — export from Figma Sellerside DS file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Component Library</div>
+              <div class="screen-caption-desc">20+ production components — each with full variant coverage, usage documentation, and do/don't guidance.</div>
+            </div>
+          </div>
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export the Colours or Typography page from Figma
+                 <img class="screen-img" src="images/ds-foundations.png" alt="Foundations" /> -->
+            <div class="screen-img" style="min-height:240px;display:flex;align-items:center;justify-content:center;background:#F1F5F9;color:#94A3B8;font-size:13px;font-weight:500;">
+              📸 Foundations (Colours, Typography, Icons) — export from Figma Sellerside DS file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Design Foundations</div>
+              <div class="screen-caption-desc">Colour tokens, typography scale, icon set, layout grid, spacing, shadow, and border radius — the shared language across the product.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Impact & Outcomes</div>
+        <h2>A shared foundation that scales</h2>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-number">20+</div>
+            <div class="impact-label">Production-ready components built, documented, and shipped</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">6</div>
+            <div class="impact-label">Design foundations established — colours, typography, icons, layout, shadow, border radius</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">✓</div>
+            <div class="impact-label">In active use across all Seller Lab products — Catalog, Onboarding, Navigation, and more</div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Add a metric — e.g. "reduced design inconsistencies", "time saved per sprint", "engineers using the system" -->
+            <div class="impact-number">↑</div>
+            <div class="impact-label" style="font-style:italic;color:var(--text-muted);">Add metric — e.g. adoption rate, design velocity improvement, or consistency score</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="side-col">
+      <div class="side-block">
+        <div class="side-block-title">Project details</div>
+        <div class="side-row">
+          <div class="side-item"><div class="side-item-label">Company</div><div class="side-item-value">noon</div></div>
+          <div class="side-item"><div class="side-item-label">Product</div><div class="side-item-value">Sellerside Design System</div></div>
+          <div class="side-item"><div class="side-item-label">Type</div><div class="side-item-value">Design System</div></div>
+          <div class="side-item"><div class="side-item-label">Status</div><div class="side-item-value" style="color:#166534;">✓ Shipped</div></div>
+          <div class="side-item"><div class="side-item-label">Year</div><div class="side-item-value"><!-- PLACEHOLDER -->2023–2024</div></div>
+        </div>
+      </div>
+      <div class="side-block">
+        <div class="side-block-title">My role</div>
+        <div class="side-row">
+          <div class="side-item"><div class="side-item-label">Title</div><div class="side-item-value"><!-- PLACEHOLDER -->Product Design Lead</div></div>
+          <div class="side-item"><div class="side-item-label">Ownership</div><div class="side-item-value">Mainly solo</div><div class="side-item-sub">DS component work in collaboration with the broader team</div></div>
+        </div>
+      </div>
+      <div class="side-block">
+        <div class="side-block-title">What I owned</div>
+        <ul class="scope-list">
+          <li class="scope-item">Design token architecture</li>
+          <li class="scope-item">All 6 foundation categories</li>
+          <li class="scope-item">20+ component design and documentation</li>
+          <li class="scope-item">Component usage guidelines</li>
+          <li class="scope-item">Change log and versioning</li>
+          <li class="scope-item">Adoption across Seller Lab teams</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-nav">
+    <a class="proj-nav-card" href="fleet-management.html"><div class="proj-nav-dir">← Previous</div><div class="proj-nav-title">Fleet Management</div></a>
+    <a class="proj-nav-card next" href="navigation.html"><div class="proj-nav-dir">Next →</div><div class="proj-nav-title">Navigation Redesign</div></a>
+  </div>
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>new Lenis({ autoRaf: true, autoToggle: true, anchors: true, allowNestedScroll: true });</script>
+</body>
+</html>

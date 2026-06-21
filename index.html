@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- PLACEHOLDER: Update the title with your full name -->
+  <title>Sara — Product Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F8F8F6;
+      --surface: #FFFFFF;
+      --border: #E4E4E0;
+      --text-primary: #111110;
+      --text-secondary: #6B6B68;
+      --text-muted: #9B9B98;
+      --accent: #1A56DB;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.08);
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* scroll-behavior handled by Lenis */
+
+    body {
+      font-family: 'Elms Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── SWITCH PILL ─────────────────────────────── */
+    .switch-pill {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 18px;
+      background: #1E0A5C;
+      color: #fff;
+      border-radius: 100px;
+      font-family: 'Elms Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(30,10,92,0.35);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+    .switch-pill:hover {
+      background: #2d148a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(30,10,92,0.45);
+    }
+    .switch-pill svg { flex-shrink: 0; }
+
+    /* ─── NAV ─────────────────────────────────────── */
+    nav {
+      background: #C4B3E5;
+      padding: 58px 80px;
+      /* Static — not sticky, matches Figma */
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nav-logo {
+      font-family: 'Elms Sans', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #1E0A5C;
+      text-decoration: none;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+    .nav-tagline {
+      font-size: 18px;
+      font-weight: 400;
+      color: #6B4FA8;
+      line-height: 1;
+    }
+    .nav-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: right;
+    }
+    .nav-contact-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 14px;
+      color: #1E0A5C;
+    }
+    .nav-contact-label {
+      color: #8B72C8;
+      font-weight: 400;
+      min-width: 40px;
+    }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    .hero {
+      background: #D5E89E;
+      padding: 72px 48px 96px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: visible;
+    }
+    .hero h1 {
+      font-size: clamp(20px, 2.4vw, 28px);
+      font-weight: 500;
+      letter-spacing: -0.3px;
+      line-height: 1.4;
+      color: #6B4FA8;
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: #9B7FCC;
+    }
+    .hero-bio-row {
+      margin-bottom: 36px;
+      position: relative;
+      max-width: 900px;
+      width: 100%;
+    }
+    .hero-bio {
+      font-size: clamp(30px, 4.6vw, 58px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      color: #1E0A5C;
+      margin: 0 auto;
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      color: #6B4FA8;
+      line-height: 1.6;
+      margin-bottom: 36px;
+      max-width: 580px;
+    }
+
+    /* ─── SPEECH BUBBLE ───────────────────────────── */
+    .speech-bubble {
+      position: absolute;
+      right: -60px;
+      top: -52px;
+      background: #fff;
+      color: #1E0A5C;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+      padding: 12px 18px;
+      border-radius: 16px;
+      white-space: nowrap;
+      animation: bubble-float 4s ease-in-out infinite;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+      z-index: 2;
+    }
+    /* tail at bottom-left */
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 20px;
+      width: 0; height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #fff;
+    }
+    @keyframes bubble-float {
+      0%, 100% { transform: translateY(0px) rotate(-1deg); }
+      50%       { transform: translateY(-7px) rotate(1deg); }
+    }
+
+    /* ─── EXPERIENCE BLOB ─────────────────────────── */
+    .experience-blob {
+      position: absolute;
+      bottom: 60px;
+      right: 8%;
+      width: 230px;
+      height: 230px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Elms Sans', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.3;
+      animation: blob-float 5s ease-in-out infinite;
+      z-index: 5;
+    }
+    .blob-bg {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+    }
+    .experience-blob .blob-num {
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1;
+      font-family: 'Elms Sans', sans-serif;
+    }
+    @keyframes blob-float {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50%       { transform: translateY(-10px) rotate(3deg); }
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: none;
+      font-family: 'Elms Sans', sans-serif;
+    }
+    .btn-primary {
+      background: #3B1A8A;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #4d24a8; transform: translateY(-2px); }
+    .btn-secondary {
+      background: #DDD6F0;
+      color: #3B1A8A;
+    }
+    .btn-secondary:hover { background: #cfc6e8; transform: translateY(-2px); }
+
+    /* ─── SECTION HEADER ──────────────────────────── */
+    .section-header {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 32px;
+      margin-bottom: 32px;
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    /* ─── STATS ROW ───────────────────────────────── */
+    .stats {
+      max-width: 1120px;
+      margin: 0 auto 80px;
+      padding: 0 32px;
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+    }
+    .stat-item { }
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ─── PROJECT WEB ─────────────────────────────── */
+    .projects {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px 100px;
+    }
+    .circles-layout {
+      position: relative;
+      width: 100%;
+      min-height: 720px;
+      margin: 24px 0 0;
+    }
+
+    /* SVG connection lines sit behind all circles */
+    .web-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 0;
+    }
+
+    /* ─── CIRCLE ──────────────────────────────────── */
+    .circle {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: block;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.35s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 1;
+    }
+
+    /*
+      Positions — circle center coords used in SVG (center = left+130, top+130):
+      DA App:      top=65,  left=75   → center (205, 195)
+      Fleet:       top=418, left=32   → center (162, 548)
+      DS:          top=12,  left=382  → center (512, 142)
+      Catalog:     top=82,  left=690  → center (820, 212)
+      Navigation:  top=398, left=538  → center (668, 528)
+      Onboarding:  top=355, left=822  → center (952, 485)
+    */
+    [data-id="da"]         { top: 65px;  left: 75px;  animation: float-a 6.3s ease-in-out infinite; }
+    [data-id="fleet"]      { top: 418px; left: 32px;  animation: float-b 7.1s ease-in-out infinite; animation-delay: -2.2s; }
+    [data-id="ds"]         { top: 12px;  left: 382px; animation: float-a 5.8s ease-in-out infinite; animation-delay: -1.4s; }
+    [data-id="catalog"]    { top: 82px;  left: 690px; animation: float-b 6.6s ease-in-out infinite; animation-delay: -3.0s; }
+    [data-id="nav"]        { top: 398px; left: 538px; animation: float-a 5.4s ease-in-out infinite; animation-delay: -0.7s; }
+    [data-id="onboarding"] { top: 355px; left: 822px; animation: float-b 7.4s ease-in-out infinite; animation-delay: -4.2s; }
+
+    @keyframes float-a {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-11px); }
+    }
+    @keyframes float-b {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .circle:hover {
+      transform: translateY(-14px) scale(1.06) !important;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.20), 0 8px 24px rgba(0,0,0,0.12);
+      z-index: 10;
+    }
+
+    /* Overlay for dark circles */
+    .circle::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.28);
+      z-index: 1;
+      transition: background var(--transition);
+    }
+    .circle:hover::before { background: rgba(0,0,0,0.40); }
+
+    /* Light overlay for light-bg circles */
+    .thumb-ds::before,
+    .thumb-catalog::before,
+    .thumb-onboard::before,
+    .thumb-nav::before {
+      background: rgba(255,255,255,0.15);
+    }
+    .thumb-ds:hover::before,
+    .thumb-catalog:hover::before,
+    .thumb-onboard:hover::before,
+    .thumb-nav:hover::before {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Gradient fills */
+    .thumb-da      { background: linear-gradient(135deg, #0A1628 0%, #0C4A6E 50%, #0E7490 100%); }
+    .thumb-fleet   { background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%); }
+    .thumb-ds      { background: linear-gradient(135deg, #F1F5F9 0%, #CBD5E1 100%); }
+    .thumb-catalog { background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 50%, #60A5FA 100%); }
+    .thumb-onboard { background: linear-gradient(135deg, #CCFBF1 0%, #5EEAD4 50%, #2DD4BF 100%); }
+    .thumb-nav     { background: linear-gradient(135deg, #EDE9FE 0%, #C4B5FD 50%, #A78BFA 100%); }
+
+    /* Circle text */
+    .circle-inner {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 36px;
+      text-align: center;
+      color: #fff;
+    }
+    .thumb-ds .circle-inner,
+    .thumb-catalog .circle-inner,
+    .thumb-onboard .circle-inner,
+    .thumb-nav .circle-inner {
+      color: #0F172A;
+    }
+    .circle-name {
+      font-size: 15px;
+      font-weight: 650;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+    .circle-sub {
+      font-size: 10.5px;
+      font-weight: 500;
+      opacity: 0.65;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .circle-arrow {
+      margin-top: 14px;
+      font-size: 18px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .circle:hover .circle-arrow { opacity: 1; transform: translateY(0); }
+
+    /* ─── ABOUT ────────────────────────────────────── */
+    .about {
+      background: var(--text-primary);
+      padding: 80px 32px;
+    }
+    .about-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .about-left h2 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .about-left p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+    .about-right {
+      padding-top: 8px;
+    }
+    .about-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .about-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .about-list-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .about-list-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .about-list-text span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ─── FOOTER ───────────────────────────────────── */
+    footer {
+      padding: 48px 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--text-primary); }
+
+    /* ─── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 900px) {
+      /* On smaller screens fall back to a simple flex wrap */
+      .circles-layout {
+        position: static;
+        min-height: unset;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 24px 0 40px;
+      }
+      .web-svg { display: none; }
+      .circle {
+        position: static;
+        width: 200px;
+        height: 200px;
+        animation: float-a 6s ease-in-out infinite !important;
+        animation-delay: 0s !important;
+      }
+    }
+    @media (max-width: 768px) {
+      .hero { padding: 56px 20px 48px; }
+      .hero h1 { letter-spacing: -1.5px; }
+      .stats { padding: 24px 20px 0; margin-bottom: 60px; gap: 28px; }
+      .section-header { padding: 0 20px; }
+      .projects { padding: 0 20px 80px; }
+      .circle { width: 170px; height: 170px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .about-left h2 { font-size: 28px; }
+      nav { padding: 36px 24px; }
+      .nav-logo { font-size: 36px; }
+      .nav-tagline { font-size: 15px; }
+      .nav-contact { display: none; }
+      .experience-blob { right: 4px; bottom: 40px; width: 150px; height: 150px; font-size: 18px; }
+      .experience-blob .blob-num { font-size: 34px; }
+      .speech-bubble { right: 0; top: -44px; font-size: 12px; padding: 9px 13px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── SWITCH CONCEPT BUTTON ─────────────────────────────────────────── -->
+  <a href="index-v2.html" class="switch-pill" title="View concept 2">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 5h10M9 2l3 3-3 3M14 11H4M7 8l-3 3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Switch
+  </a>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo-block">
+        <a href="#" class="nav-logo">Sara Ismail</a>
+        <div class="nav-tagline">Product design lead</div>
+      </div>
+      <div class="nav-contact">
+        <div class="nav-contact-row">
+          <span class="nav-contact-label">Email</span>
+          <!-- PLACEHOLDER: Update to your personal email -->
+          <span>hello@sara-ismail.com</span>
+        </div>
+        <div class="nav-contact-row">
+          <span class="nav-contact-label">Phone</span>
+          <!-- PLACEHOLDER: Update or remove phone number -->
+          <span>+20 100 842 3334</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <h1>Sara Ismail &nbsp;<em>· Product design lead</em></h1>
+    <div class="hero-bio-row">
+      <p class="hero-bio">
+        Designer, problem solver,<br />
+        systems thinker, UX advocate<br />
+        and business metrics guardian
+      </p>
+      <div class="speech-bubble">Yes I build using AI!</div>
+    </div>
+    <p class="hero-subtitle">
+      Bridging user experience, business needs, and meticulous product design
+      to create impactful products and features.
+    </p>
+    <div class="hero-links">
+      <a href="#work" class="btn btn-primary">My work ↓</a>
+      <!-- PLACEHOLDER: Add your LinkedIn URL -->
+      <a href="#" class="btn btn-secondary">Linkedin ↗</a>
+      <!-- PLACEHOLDER: Add your CV/resume link -->
+      <a href="#" class="btn btn-secondary">Resume ↗</a>
+    </div>
+    <!-- Floating organic blob -->
+    <div class="experience-blob">
+      <svg class="blob-bg" id="blob-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path id="blob-path" fill="#D966CC"/>
+      </svg>
+      <span class="blob-num">8+</span>
+      <span>years of<br/>experience.</span>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats" id="work">
+    <div class="stat-item">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Shipped products</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">5+</div>
+      <!-- PLACEHOLDER: Update with actual years of experience -->
+      <div class="stat-label">Years of experience</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">2</div>
+      <div class="stat-label">Platforms (web + mobile)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">1</div>
+      <div class="stat-label">Design system built</div>
+    </div>
+  </div>
+
+  <!-- PROJECTS SECTION -->
+  <div class="section-header">
+    <div class="section-label">Selected work</div>
+    <div class="section-title">6 projects · all shipped or in active use</div>
+  </div>
+
+  <section class="projects">
+    <div class="circles-layout">
+
+      <!--
+        SVG connection lines.
+        Circle centers (left+130, top+130):
+          DA:         (205, 195)
+          Fleet:      (162, 548)
+          DS:         (512, 142)
+          Catalog:    (820, 212)
+          Nav:        (668, 528)
+          Onboarding: (952, 485)
+      -->
+      <svg class="web-svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- noon Food gradient line -->
+          <linearGradient id="lg-food" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0E7490"/>
+            <stop offset="100%" stop-color="#0C4A6E"/>
+          </linearGradient>
+          <!-- Seller Lab gradient line -->
+          <linearGradient id="lg-seller" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7C3AED"/>
+            <stop offset="100%" stop-color="#3B82F6"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ── noon Food cluster: DA ↔ Fleet ── -->
+        <line x1="205" y1="195" x2="162" y2="548"
+              stroke="url(#lg-food)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.45"/>
+
+        <!-- ── Seller Lab web ── -->
+        <!-- DS → Catalog -->
+        <line x1="512" y1="142" x2="820" y2="212"
+              stroke="url(#lg-seller)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.38"/>
+        <!-- DS → Nav -->
+        <line x1="512" y1="142" x2="668" y2="528"
+              stroke="url(#lg-seller)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.38"/>
+        <!-- DS → Onboarding -->
+        <line x1="512" y1="142" x2="952" y2="485"
+              stroke="url(#lg-seller)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.28"/>
+        <!-- Catalog → Nav -->
+        <line x1="820" y1="212" x2="668" y2="528"
+              stroke="url(#lg-seller)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.38"/>
+        <!-- Catalog → Onboarding -->
+        <line x1="820" y1="212" x2="952" y2="485"
+              stroke="url(#lg-seller)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.38"/>
+        <!-- Nav → Onboarding -->
+        <line x1="668" y1="528" x2="952" y2="485"
+              stroke="url(#lg-seller)" stroke-width="1.5"
+              stroke-dasharray="6 5" stroke-opacity="0.38"/>
+
+        <!-- Group labels -->
+        <text x="88" y="400" font-family="Inter, sans-serif" font-size="11"
+              font-weight="600" letter-spacing="1.2" fill="#0E7490" fill-opacity="0.55"
+              text-anchor="middle" transform="rotate(-78, 88, 400)">noon Food</text>
+        <text x="780" y="385" font-family="Inter, sans-serif" font-size="11"
+              font-weight="600" letter-spacing="1.2" fill="#7C3AED" fill-opacity="0.5"
+              text-anchor="middle">Seller Lab</text>
+      </svg>
+
+      <!-- ① DA APP -->
+      <a class="circle thumb-da" data-id="da" href="da-app.html">
+        <!-- PLACEHOLDER: When you have the PNG → style="background-image:url('images/da-app-cover.png');background-size:cover;background-position:center;" -->
+        <div class="circle-inner">
+          <div class="circle-name">Noon Food<br/>DA App</div>
+          <div class="circle-sub">Mobile</div>
+          <div class="circle-arrow">↗</div>
+        </div>
+      </a>
+
+      <!-- ② FLEET MANAGEMENT -->
+      <a class="circle thumb-fleet" data-id="fleet" href="fleet-management.html">
+        <!-- PLACEHOLDER: style="background-image:url('images/fleet-mgmt-cover.png');background-size:cover;background-position:center;" -->
+        <div class="circle-inner">
+          <div class="circle-name">Fleet<br/>Management</div>
+          <div class="circle-sub">Web · Ops</div>
+          <div class="circle-arrow">↗</div>
+        </div>
+      </a>
+
+      <!-- ③ SELLERSIDE DESIGN SYSTEM -->
+      <a class="circle thumb-ds" data-id="ds" href="sellerside-ds.html">
+        <!-- PLACEHOLDER: style="background-image:url('images/sellerside-ds.png');background-size:cover;background-position:center;" -->
+        <div class="circle-inner">
+          <div class="circle-name">Sellerside<br/>Design System</div>
+          <div class="circle-sub">noon · Seller Lab</div>
+          <div class="circle-arrow">↗</div>
+        </div>
+      </a>
+
+      <!-- ④ CATALOG -->
+      <a class="circle thumb-catalog" data-id="catalog" href="catalog.html">
+        <!-- PLACEHOLDER: style="background-image:url('images/catalog-plp.png');background-size:cover;background-position:center;" -->
+        <div class="circle-inner">
+          <div class="circle-name">Seller Lab<br/>Catalog</div>
+          <div class="circle-sub">Web · PLP</div>
+          <div class="circle-arrow">↗</div>
+        </div>
+      </a>
+
+      <!-- ⑤ ONBOARDING -->
+      <a class="circle thumb-onboard" data-id="onboarding" href="onboarding.html">
+        <!-- PLACEHOLDER: style="background-image:url('images/onboarding-cover.png');background-size:cover;background-position:center;" -->
+        <div class="circle-inner">
+          <div class="circle-name">Seller Lab<br/>Onboarding</div>
+          <div class="circle-sub">Web · Growth</div>
+          <div class="circle-arrow">↗</div>
+        </div>
+      </a>
+
+      <!-- ⑥ NAVIGATION -->
+      <a class="circle thumb-nav" data-id="nav" href="navigation.html">
+        <!-- PLACEHOLDER: style="background-image:url('images/nav-cover.png');background-size:cover;background-position:center;" -->
+        <div class="circle-inner">
+          <div class="circle-name">Seller Lab<br/>Navigation</div>
+          <div class="circle-sub">Web · IA</div>
+          <div class="circle-arrow">↗</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <!-- PLACEHOLDER: Write your own about section — this is a draft based on your work -->
+        <h2>Design for<br />complex systems</h2>
+        <p>
+          I'm a product designer who specialises in seller and operations tooling —
+          environments where the wrong design decision can cost someone their income,
+          or leave an ops team blind during a critical moment.
+        </p>
+        <p>
+          My work spans the full product lifecycle: from initial scoping and information
+          architecture through to shipped product and iteration. I'm comfortable going deep
+          into edge cases, working closely with engineers, and building the systems that make
+          a design team's work consistent.
+        </p>
+        <!-- PLACEHOLDER: Add a personal touch — your process, something you care about, or what you're looking for next -->
+      </div>
+      <div class="about-right">
+        <ul class="about-list">
+          <li>
+            <div class="about-list-icon">🛠</div>
+            <div class="about-list-text">
+              <strong>Tools</strong>
+              <span>Figma, FigJam, Maze, Notion</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">🎯</div>
+            <div class="about-list-text">
+              <strong>Specialities</strong>
+              <span>Complex web tools, mobile apps, design systems, B2B/ops products</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">🏢</div>
+            <div class="about-list-text">
+              <!-- PLACEHOLDER: Update company and duration -->
+              <strong>Currently</strong>
+              <span>Product Designer at noon</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">📍</div>
+            <div class="about-list-text">
+              <!-- PLACEHOLDER: Update your location -->
+              <strong>Based in</strong>
+              <span>UAE</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">✉️</div>
+            <div class="about-list-text">
+              <strong>Contact</strong>
+              <span>saismail@noon.com</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <!-- PLACEHOLDER: Update name -->
+      <span class="footer-left">© 2026 Sara Ismail</span>
+      <div class="footer-links">
+        <!-- PLACEHOLDER: Add real social/contact links -->
+        <a href="mailto:saismail@noon.com">Email</a>
+        <a href="#" target="_blank">LinkedIn</a>
+        <a href="#" target="_blank">Resume</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>
+    // Lenis smooth scroll
+    new Lenis({ autoRaf: true, autoToggle: true, anchors: true, allowNestedScroll: true });
+
+    // Ensure circle clicks navigate reliably (overrides any browser local-file quirks)
+    document.querySelectorAll('a.circle, a.card').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = el.getAttribute('href');
+      });
+    });
+
+    // ── Organic blob generator ──────────────────────────────────────────────
+    // Uses Catmull-Rom splines through hand-tuned irregular points.
+    // Points defined as [angleDeg, radius] — deliberately uneven spacing
+    // and varying radii so no two sections look the same.
+    (function() {
+      var path = document.getElementById('blob-path');
+      if (!path) return;
+
+      var cx = 100, cy = 100;
+
+      // [angle-degrees, radius] — irregular angular gaps + radii
+      var polar = [
+        [  0,  88],   // right — fat
+        [ 26,  72],   // slight dip
+        [ 55,  86],   // bottom-right bump
+        [ 82,  64],   // pulled in
+        [118,  92],   // bottom-left bulge
+        [150,  74],   // mid-left
+        [178,  68],   // left — flat/inward
+        [210,  82],   // lower-left push
+        [245,  62],   // tight dip
+        [272,  85],   // upper-left bump
+        [300,  70],   // pulls back
+        [330,  90]    // top-right bulge
+      ];
+
+      // Convert polar → Cartesian
+      var pts = polar.map(function(p) {
+        var rad = p[0] * Math.PI / 180;
+        return [cx + p[1] * Math.cos(rad), cy + p[1] * Math.sin(rad)];
+      });
+
+      var n = pts.length;
+
+      // Catmull-Rom → cubic bezier:  CP1 = P1 + (P2-P0)/6,  CP2 = P2 - (P3-P1)/6
+      var d = 'M ' + pts[0][0].toFixed(2) + ',' + pts[0][1].toFixed(2);
+      for (var i = 0; i < n; i++) {
+        var p0 = pts[(i - 1 + n) % n];
+        var p1 = pts[i];
+        var p2 = pts[(i + 1) % n];
+        var p3 = pts[(i + 2) % n];
+        var cp1x = (p1[0] + (p2[0] - p0[0]) / 6).toFixed(2);
+        var cp1y = (p1[1] + (p2[1] - p0[1]) / 6).toFixed(2);
+        var cp2x = (p2[0] - (p3[0] - p1[0]) / 6).toFixed(2);
+        var cp2y = (p2[1] - (p3[1] - p1[1]) / 6).toFixed(2);
+        d += ' C ' + cp1x + ',' + cp1y + ' ' + cp2x + ',' + cp2y + ' ' + p2[0].toFixed(2) + ',' + p2[1].toFixed(2);
+      }
+      d += ' Z';
+      path.setAttribute('d', d);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delivery Agent App — Sara Ismail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F8F8F6; --surface: #FFFFFF; --border: #E4E4E0;
+      --text-primary: #111110; --text-secondary: #6B6B68; --text-muted: #9B9B98;
+      --accent: #0E7490; --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px;
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* scroll-behavior handled by Lenis */
+    body { font-family: 'Google Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(10,22,40,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 32px; }
+    .nav-inner { max-width: 1120px; margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-back { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6); text-decoration: none; transition: color var(--transition); }
+    .nav-back:hover { color: #fff; }
+    .nav-label { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.35); }
+    .hero { background: linear-gradient(160deg, #0A1628 0%, #0C4A6E 55%, #0E7490 100%); padding: 72px 32px 64px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .hero-inner { max-width: 1120px; margin: 0 auto; }
+    .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #67E8F9; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.08; color: #fff; margin-bottom: 16px; max-width: 700px; }
+    .hero-sub { font-size: 17px; color: rgba(255,255,255,0.65); max-width: 560px; line-height: 1.7; margin-bottom: 28px; }
+    .meta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+    .tag-shipped { background: #DCFCE7; color: #166534; }
+    .tag-mobile { background: #FEF3C7; color: #92400E; }
+    .tag-role { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.75); }
+    .tag-year { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.55); }
+    .cover-wrap { max-width: 1120px; margin: 0 auto; padding: 48px 32px 0; }
+    .cover-img { width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.15); display: block; min-height: 120px; background: #0C4A6E; }
+    .cover-caption { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 12px; }
+    .body-wrap { max-width: 1120px; margin: 0 auto; padding: 64px 32px 0; display: grid; grid-template-columns: 680px 1fr; gap: 80px; align-items: start; }
+    .side-col { position: sticky; top: 80px; }
+    .section { margin-bottom: 64px; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+    .section h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 16px; line-height: 1.25; }
+    .section p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 14px; }
+    .section p:last-child { margin-bottom: 0; }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+    .feature-icon { font-size: 18px; margin-bottom: 6px; }
+    .feature-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+    .feature-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .decisions { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; border-left: 3px solid var(--accent); }
+    .decision-number { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .decision-title { font-size: 15px; font-weight: 650; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+    .decision-body { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+    .screens { margin-top: 8px; display: flex; flex-direction: column; gap: 16px; }
+    .screen-card { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+    .screen-img { width: 100%; display: block; background: var(--bg); }
+    .screen-caption { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .screen-caption-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+    .screen-caption-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .impact-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; }
+    .impact-number { font-size: 30px; font-weight: 700; letter-spacing: -1px; color: var(--text-primary); line-height: 1; }
+    .impact-label { font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.45; }
+    .side-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; margin-bottom: 16px; }
+    .side-block-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    .side-row { display: flex; flex-direction: column; gap: 10px; }
+    .side-item-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .side-item-value { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+    .side-item-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+    .scope-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .scope-item { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+    .scope-item::before { content: "→"; color: var(--text-muted); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+    .project-nav { max-width: 1120px; margin: 0 auto; padding: 48px 32px 80px; display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border); margin-top: 64px; }
+    .proj-nav-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; text-decoration: none; color: inherit; transition: all var(--transition); display: block; max-width: 280px; }
+    .proj-nav-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .proj-nav-dir { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .proj-nav-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .proj-nav-card.next { text-align: right; margin-left: auto; }
+    @media (max-width: 900px) { .body-wrap { grid-template-columns: 1fr; gap: 0; } .side-col { position: static; } .feature-grid { grid-template-columns: 1fr; } .impact-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .hero, .cover-wrap, .body-wrap, .project-nav { padding-left: 20px; padding-right: 20px; } .impact-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-back">← Back to portfolio</a>
+      <span class="nav-label">DA App</span>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">noon Food</div>
+      <h1>Delivery Agent App</h1>
+      <p class="hero-sub">A full-featured mobile app for noon Food delivery agents, covering their entire work day — from shift start to last drop-off.</p>
+      <div class="meta-row">
+        <span class="tag tag-shipped">✓ Shipped</span>
+        <span class="tag tag-mobile">Mobile · iOS</span>
+        <span class="tag tag-role">Solo lead</span>
+        <span class="tag tag-year"><!-- PLACEHOLDER: Add year -->2023–2024</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-wrap">
+    <!-- PLACEHOLDER: Export "Ahlan!" cover from Figma (4GV0n060nxg0CjcWIr3Qps) → save as images/da-app-cover.png
+         <img class="cover-img" src="images/da-app-cover.png" alt="Delivery Agent App" /> -->
+    <div class="cover-img" style="display:flex;align-items:center;justify-content:center;color:#67E8F9;font-size:14px;font-weight:500;min-height:180px;">
+      📸 Export "Ahlan!" cover from Figma → da-app-cover.png
+    </div>
+    <p class="cover-caption">noon Food — Delivery Agent App · Mobile</p>
+  </div>
+
+  <div class="body-wrap">
+    <div class="main-col">
+
+      <div class="section">
+        <div class="section-label">Overview</div>
+        <p>
+          Delivery agents are the last mile of noon Food — they interact with the product on every single shift, often under time pressure, in varying conditions. This app is their primary tool for managing their entire work day: checking in for shifts, receiving and fulfilling orders, tracking performance, claiming incentives, managing breaks, handling payments, and reaching support when things go wrong.
+        </p>
+        <p>
+          I led the initial UX design of the app, covering 15+ distinct flows. The work included designing for Arabic localisation from the ground up, and developing a bespoke illustration system for the app's empty states and onboarding moments.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">The Problem</div>
+        <h2>Agents were managing their work day across fragmented tools</h2>
+        <p>
+          Before this app, delivery agents relied on a patchwork of channels — WhatsApp groups for shift updates, phone calls for support, paper-based processes for cash handling. There was no single source of truth for an agent's shift, orders, earnings, or performance. This created errors, delays, and significant frustration.
+        </p>
+        <p>
+          The design challenge was to consolidate everything into a single app without overwhelming agents who needed to act quickly in the field — often with one hand, in bright sunlight, between stops.
+          <!-- PLACEHOLDER: Add any specific pain points from research if you have them -->
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">What I designed</div>
+        <h2>15+ flows across the full agent work day</h2>
+        <div class="feature-grid">
+          <div class="feature-card"><div class="feature-icon">🔐</div><div class="feature-title">Login & onboarding</div><div class="feature-desc">First-run experience and authentication</div></div>
+          <div class="feature-card"><div class="feature-icon">🏠</div><div class="feature-title">Home & navigation</div><div class="feature-desc">App shell, bottom nav, and home dashboard</div></div>
+          <div class="feature-card"><div class="feature-icon">📅</div><div class="feature-title">Shift management</div><div class="feature-desc">Check-in, check-out, shift scheduling</div></div>
+          <div class="feature-card"><div class="feature-icon">📦</div><div class="feature-title">Order fulfilment</div><div class="feature-desc">Order acceptance, pickup, delivery flow</div></div>
+          <div class="feature-card"><div class="feature-icon">📍</div><div class="feature-title">Live tracking</div><div class="feature-desc">Real-time map and delivery navigation</div></div>
+          <div class="feature-card"><div class="feature-icon">📈</div><div class="feature-title">Performance</div><div class="feature-desc">Delivery metrics, ratings, and history</div></div>
+          <div class="feature-card"><div class="feature-icon">🎁</div><div class="feature-title">Incentives</div><div class="feature-desc">Earnings, bonuses, and reward tracking</div></div>
+          <div class="feature-card"><div class="feature-icon">☕</div><div class="feature-title">Break management</div><div class="feature-desc">Break requests and shift pause flows</div></div>
+          <div class="feature-card"><div class="feature-icon">🏦</div><div class="feature-title">Bank transfer</div><div class="feature-desc">Earnings payout and banking details</div></div>
+          <div class="feature-card"><div class="feature-icon">💵</div><div class="feature-title">Cash relay</div><div class="feature-desc">Cash order handling and reconciliation</div></div>
+          <div class="feature-card"><div class="feature-icon">🛟</div><div class="feature-title">Support experience</div><div class="feature-desc">In-app help and issue resolution</div></div>
+          <div class="feature-card"><div class="feature-icon">🔔</div><div class="feature-title">Notifications</div><div class="feature-desc">Push notifications and in-app alerts</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Process & Key Decisions</div>
+        <h2>Designing for the field, not the desk</h2>
+        <div class="decisions">
+          <div class="decision-card">
+            <div class="decision-number">Decision 01</div>
+            <div class="decision-title">Design Arabic-first, not Arabic-as-an-afterthought</div>
+            <div class="decision-body">A significant portion of noon Food's delivery agents are Arabic speakers. Rather than designing in English and mirroring the layout for RTL, the Arabic experience was considered at every stage — from information hierarchy to icon placement to text length variation. All screens were designed and QA'd in both directions.
+            <!-- PLACEHOLDER: Add any specific challenge this created or solved --></div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 02</div>
+            <div class="decision-title">One-handed, eyes-up interaction as the design constraint</div>
+            <div class="decision-body">Agents are often physically moving when they use the app — on a bike, carrying a package, navigating. Every critical action was designed to be reachable with a thumb from the bottom of the screen. Confirmation steps were streamlined and destructive actions placed out of accidental reach.</div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 03</div>
+            <div class="decision-title">Build a bespoke illustration system for empty states and onboarding</div>
+            <div class="decision-body">Generic placeholder states felt out of place in a product that agents spend their working lives in. A custom illustration style was developed — friendly, energetic, and consistent with the noon Food brand — used across empty states, shift start screens, and onboarding moments.
+            <!-- PLACEHOLDER: Add any detail about the illustration system or who created it --></div>
+          </div>
+          <div class="decision-card">
+            <div class="decision-number">Decision 04</div>
+            <div class="decision-title">Surface earnings and performance prominently — agents care about their income</div>
+            <div class="decision-body">Agent motivation is directly tied to visibility of earnings and performance. Incentives, performance metrics, and daily earnings were designed to be easily accessible from the home screen — not buried in a settings menu — because agents check them constantly throughout their shift.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">The Work</div>
+        <h2>Key screens</h2>
+        <div class="screens">
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export Home & Nav page from Figma (4GV0n060nxg0CjcWIr3Qps)
+                 <img class="screen-img" src="images/da-app-home.png" alt="Home screen" /> -->
+            <div class="screen-img" style="min-height:280px;display:flex;align-items:center;justify-content:center;background:#0A1628;color:#67E8F9;font-size:13px;font-weight:500;">
+              📸 Home & Nav — export from Figma DA App file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Home & Navigation</div>
+              <div class="screen-caption-desc">The agent's home screen — shift status, today's earnings, quick actions, and bottom navigation designed for one-handed use.</div>
+            </div>
+          </div>
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export Order Fulfillment page from Figma
+                 <img class="screen-img" src="images/da-app-order.png" alt="Order fulfillment" /> -->
+            <div class="screen-img" style="min-height:260px;display:flex;align-items:center;justify-content:center;background:#0C4A6E;color:#67E8F9;font-size:13px;font-weight:500;">
+              📸 Order Fulfillment — export from Figma DA App file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Order Fulfilment Flow</div>
+              <div class="screen-caption-desc">Order acceptance, pickup confirmation, delivery steps, and customer contact — designed to minimise taps under time pressure.</div>
+            </div>
+          </div>
+          <div class="screen-card">
+            <!-- PLACEHOLDER: Export Performance or Incentives page from Figma
+                 <img class="screen-img" src="images/da-app-performance.png" alt="Performance" /> -->
+            <div class="screen-img" style="min-height:240px;display:flex;align-items:center;justify-content:center;background:#0A1628;color:#67E8F9;font-size:13px;font-weight:500;">
+              📸 Performance & Incentives — export from Figma DA App file
+            </div>
+            <div class="screen-caption">
+              <div class="screen-caption-title">Performance & Incentives</div>
+              <div class="screen-caption-desc">Daily and weekly performance metrics, delivery ratings, earnings breakdown, and bonus tracking — accessible from the home screen.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Impact & Outcomes</div>
+        <h2>Shipped and in active use</h2>
+        <p>The app shipped and is used by noon Food delivery agents across the region on every shift.</p>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-number">15+</div>
+            <div class="impact-label">Distinct flows designed — covering the full agent work day</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">2</div>
+            <div class="impact-label">Languages designed from the ground up — English and Arabic (RTL)</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-number">✓</div>
+            <div class="impact-label">Shipped and in active use by noon Food delivery agents</div>
+          </div>
+          <div class="impact-card">
+            <!-- PLACEHOLDER: Add a real metric if you have one — e.g. "daily active agents", "order completion rate", "support ticket reduction" -->
+            <div class="impact-number">↑</div>
+            <div class="impact-label" style="font-style:italic;color:var(--text-muted);">Add impact metric — e.g. DAU, order completion rate, or agent satisfaction</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="side-col">
+      <div class="side-block">
+        <div class="side-block-title">Project details</div>
+        <div class="side-row">
+          <div class="side-item"><div class="side-item-label">Company</div><div class="side-item-value">noon Food</div></div>
+          <div class="side-item"><div class="side-item-label">Product</div><div class="side-item-value">Delivery Agent App</div></div>
+          <div class="side-item"><div class="side-item-label">Platform</div><div class="side-item-value">Mobile · iOS</div></div>
+          <div class="side-item"><div class="side-item-label">Status</div><div class="side-item-value" style="color:#166534;">✓ Shipped</div></div>
+          <div class="side-item"><div class="side-item-label">Year</div><div class="side-item-value"><!-- PLACEHOLDER -->2023–2024</div></div>
+        </div>
+      </div>
+      <div class="side-block">
+        <div class="side-block-title">My role</div>
+        <div class="side-row">
+          <div class="side-item"><div class="side-item-label">Title</div><div class="side-item-value"><!-- PLACEHOLDER -->Product Design Lead</div></div>
+          <div class="side-item"><div class="side-item-label">Ownership</div><div class="side-item-value">Solo lead</div><div class="side-item-sub">Initial design; others have continued to build on the work</div></div>
+        </div>
+      </div>
+      <div class="side-block">
+        <div class="side-block-title">What I owned</div>
+        <ul class="scope-list">
+          <li class="scope-item">End-to-end UX across 15+ flows</li>
+          <li class="scope-item">Arabic (RTL) localisation design</li>
+          <li class="scope-item">Bespoke illustration system</li>
+          <li class="scope-item">App navigation architecture</li>
+          <li class="scope-item">Shift, order, and payment flows</li>
+          <li class="scope-item">Performance and incentives surfaces</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-nav">
+    <a class="proj-nav-card" href="index.html">
+      <div class="proj-nav-dir">← Back</div>
+      <div class="proj-nav-title">All projects</div>
+    </a>
+    <a class="proj-nav-card next" href="fleet-management.html">
+      <div class="proj-nav-dir">Next →</div>
+      <div class="proj-nav-title">Fleet Management</div>
+    </a>
+  </div>
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>new Lenis({ autoRaf: true, autoToggle: true, anchors: true, allowNestedScroll: true });</script>
+</body>
+</html>

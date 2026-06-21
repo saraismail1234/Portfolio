@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- PLACEHOLDER: Update the title with your full name -->
+  <title>Sara — Product Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F8F8F6;
+      --surface: #FFFFFF;
+      --border: #E4E4E0;
+      --text-primary: #111110;
+      --text-secondary: #6B6B68;
+      --text-muted: #9B9B98;
+      --accent: #1A56DB;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.08);
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAV ─────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248, 248, 246, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+    }
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.2px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 88px 32px 72px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      background: #22C55E;
+      border-radius: 50%;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 68px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--text-primary);
+      max-width: 760px;
+      margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--text-secondary);
+    }
+    .hero-bio {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+    .hero-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--text-primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #333330; transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--bg); transform: translateY(-1px); }
+
+    /* ─── SECTION HEADER ──────────────────────────── */
+    .section-header {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 32px;
+      margin-bottom: 32px;
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    /* ─── STATS ROW ───────────────────────────────── */
+    .stats {
+      max-width: 1120px;
+      margin: 0 auto 80px;
+      padding: 0 32px;
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+    }
+    .stat-item { }
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ─── PROJECT GRID ────────────────────────────── */
+    .projects {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 32px 100px;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .projects-grid .card:first-child {
+      grid-column: 1 / -1;
+    }
+
+    /* ─── CARD ─────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .projects-grid .card:first-child .card-thumb {
+      aspect-ratio: 21/9;
+    }
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Gradient fallback thumbs */
+    .thumb-da     { background: linear-gradient(135deg, #0A1628 0%, #0C4A6E 50%, #0E7490 100%); }
+    .thumb-fleet  { background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%); }
+    .thumb-ds     { background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%); }
+    .thumb-catalog { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%); }
+    .thumb-onboard { background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 50%, #99F6E4 100%); }
+    .thumb-nav    { background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 50%, #DDD6FE 100%); }
+
+    /* Thumb placeholder text */
+    .thumb-label {
+      text-align: center;
+      padding: 24px;
+    }
+    .thumb-label-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+    .thumb-label-sub {
+      font-size: 13px;
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+    .thumb-da .thumb-label-title,
+    .thumb-da .thumb-label-sub { color: #fff; }
+    .thumb-fleet .thumb-label-title,
+    .thumb-fleet .thumb-label-sub { color: #fff; }
+    .thumb-ds .thumb-label-title { color: #0F172A; }
+    .thumb-ds .thumb-label-sub { color: #475569; }
+    .thumb-catalog .thumb-label-title { color: #1D4ED8; }
+    .thumb-catalog .thumb-label-sub { color: #3B82F6; }
+    .thumb-onboard .thumb-label-title { color: #0F766E; }
+    .thumb-onboard .thumb-label-sub { color: #14B8A6; }
+    .thumb-nav .thumb-label-title { color: #4C1D95; }
+    .thumb-nav .thumb-label-sub { color: #7C3AED; }
+
+    .card-body {
+      padding: 24px 28px 28px;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+    .tag-shipped { background: #DCFCE7; color: #166534; }
+    .tag-mobile  { background: #FEF3C7; color: #92400E; }
+    .tag-web     { background: #EFF6FF; color: #1E40AF; }
+    .tag-ds      { background: #F5F3FF; color: #4C1D95; }
+    .tag-role    { background: #F1F5F9; color: #475569; }
+    .tag-exploration { background: #FFF7ED; color: #92400E; }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: -0.4px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .projects-grid .card:first-child .card-title {
+      font-size: 22px;
+    }
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .card-company {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .card-arrow {
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: transform var(--transition), color var(--transition);
+    }
+    .card:hover .card-arrow {
+      transform: translate(3px, -3px);
+      color: var(--text-primary);
+    }
+
+    /* ─── ABOUT ────────────────────────────────────── */
+    .about {
+      background: var(--text-primary);
+      padding: 80px 32px;
+    }
+    .about-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .about-left h2 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .about-left p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+    .about-right {
+      padding-top: 8px;
+    }
+    .about-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .about-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .about-list-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .about-list-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .about-list-text span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ─── FOOTER ───────────────────────────────────── */
+    footer {
+      padding: 48px 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--text-primary); }
+
+    /* ─── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero { padding: 56px 20px 48px; }
+      .hero h1 { letter-spacing: -1.5px; }
+      .stats { padding: 24px 20px 0; margin-bottom: 60px; gap: 28px; }
+      .section-header { padding: 0 20px; }
+      .projects { padding: 0 20px 80px; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .projects-grid .card:first-child { grid-column: auto; }
+      .projects-grid .card:first-child .card-thumb { aspect-ratio: 16/9; }
+      .projects-grid .card:first-child .card-title { font-size: 18px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .about-left h2 { font-size: 28px; }
+      .nav-links { display: none; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <!-- PLACEHOLDER: Replace with your full name -->
+      <a href="#" class="nav-logo">Sara Ismail</a>
+      <ul class="nav-links">
+        <li><a href="#work">Work</a></li>
+        <li><a href="#about">About</a></li>
+        <!-- PLACEHOLDER: Add your LinkedIn / CV link -->
+        <li><a href="mailto:saismail@noon.com">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      Available for new opportunities
+    </div>
+    <!-- PLACEHOLDER: Update name and adjust description to your taste -->
+    <h1>Sara Ismail<br /><em>Product Designer</em></h1>
+    <p class="hero-bio">
+      I design complex, high-stakes products that real people rely on — from seller tools
+      handling millions of SKUs, to mobile apps used by delivery agents on every shift.
+      <!-- PLACEHOLDER: Add years of experience or a specific detail about your background -->
+      Based in the UAE, currently at noon.
+    </p>
+    <div class="hero-links">
+      <a href="#work" class="btn btn-primary">View work ↓</a>
+      <!-- PLACEHOLDER: Add your LinkedIn URL -->
+      <a href="#" class="btn btn-secondary">LinkedIn ↗</a>
+      <!-- PLACEHOLDER: Add your CV/resume link if you have one -->
+      <a href="#" class="btn btn-secondary">Resume ↗</a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats" id="work">
+    <div class="stat-item">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Shipped products</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">5+</div>
+      <!-- PLACEHOLDER: Update with actual years of experience -->
+      <div class="stat-label">Years of experience</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">2</div>
+      <div class="stat-label">Platforms (web + mobile)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">1</div>
+      <div class="stat-label">Design system built</div>
+    </div>
+  </div>
+
+  <!-- PROJECTS SECTION -->
+  <div class="section-header">
+    <div class="section-label">Selected work</div>
+    <div class="section-title">6 projects · all shipped or in active use</div>
+  </div>
+
+  <section class="projects">
+    <div class="projects-grid">
+
+      <!-- ① DA APP (featured / full-width) -->
+      <!-- PLACEHOLDER: Replace href with your Figma prototype link or case study URL -->
+      <a class="card" href="https://www.figma.com/design/4GV0n060nxg0CjcWIr3Qps/" target="_blank">
+        <div class="card-thumb thumb-da">
+          <!-- PLACEHOLDER: Export the "Ahlan!" cover from Figma and replace this block:
+               <img src="images/da-app-cover.png" alt="Noon Food Delivery Agent App" />
+          -->
+          <div class="thumb-label">
+            <div class="thumb-label-title">Noon Food<br/>Delivery Agent App</div>
+            <div class="thumb-label-sub">Mobile · iOS</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="tag tag-shipped">✓ Shipped</span>
+            <span class="tag tag-mobile">Mobile</span>
+            <span class="tag tag-role">Solo lead</span>
+          </div>
+          <div class="card-title">Noon Food — Delivery Agent App</div>
+          <div class="card-desc">
+            A full-featured mobile app for noon Food delivery agents, covering their entire
+            work day: login, shift management, order fulfillment, live tracking, performance
+            dashboards, incentives, break management, bank transfers, and in-app support.
+            Built with Arabic localisation and a bespoke illustration system.
+            <!-- PLACEHOLDER: Add detail: "I redesigned X flow after discovering that agents were doing Y manually" -->
+          </div>
+          <div class="card-footer">
+            <span class="card-company">noon Food · Mobile</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ② FLEET MANAGEMENT -->
+      <a class="card" href="https://www.figma.com/design/8IXqTD5CSE1yjNlzZrqxeX/" target="_blank">
+        <div class="card-thumb thumb-fleet">
+          <!-- PLACEHOLDER: Export the Fleet Management cover from Figma:
+               <img src="images/fleet-mgmt-cover.png" alt="Fleet Management" />
+          -->
+          <div class="thumb-label">
+            <div class="thumb-label-title">Fleet<br/>Management</div>
+            <div class="thumb-label-sub">Web · Ops dashboard</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="tag tag-shipped">✓ Shipped</span>
+            <span class="tag tag-web">Web</span>
+            <span class="tag tag-role">Solo</span>
+          </div>
+          <div class="card-title">Noon Food — Fleet Management</div>
+          <div class="card-desc">
+            An operations dashboard for managing noon Food's delivery fleets in real time.
+            Features include a live fleet map, delivery agent attention alerts, heatmaps,
+            order detail views, fleet configuration, and DA announcement tooling.
+            <!-- PLACEHOLDER: Add impact if you have it: "Used daily by X ops managers across Y cities" -->
+          </div>
+          <div class="card-footer">
+            <span class="card-company">noon Food · Web</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ③ SELLERSIDE DESIGN SYSTEM -->
+      <a class="card" href="https://www.figma.com/design/nTKAkowOpxrf5K2UjbTPgM/" target="_blank">
+        <div class="card-thumb thumb-ds">
+          <!-- PLACEHOLDER: Export the Sellerside DS thumbnail from Figma (it's beautiful — use it!):
+               <img src="images/sellerside-ds.png" alt="Sellerside Design System" />
+          -->
+          <div class="thumb-label">
+            <div class="thumb-label-title">Sellerside<br/>Design System</div>
+            <div class="thumb-label-sub">noon · Seller Lab</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="tag tag-shipped">✓ Shipped</span>
+            <span class="tag tag-ds">Design System</span>
+            <span class="tag tag-role">Mainly solo</span>
+          </div>
+          <div class="card-title">Sellerside — noon Design System</div>
+          <div class="card-desc">
+            Built the design system that underpins noon's entire seller-facing product.
+            Covers foundations (colours, typography, icons, layout, spacing, shadows) and
+            20+ production-ready components — including Tables, Tabs, Buttons, Badges,
+            File Uploaders, Steppers, and more — all documented with variants and usage guidance.
+            <!-- PLACEHOLDER: Add context: "Adopted by X designers / engineers" or "Reduced design inconsistency by…" -->
+          </div>
+          <div class="card-footer">
+            <span class="card-company">noon · Seller Lab</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ④ CATALOG -->
+      <a class="card" href="https://www.figma.com/design/d0XXaB4L8JUM2S1Vk1pKoQ/" target="_blank">
+        <div class="card-thumb thumb-catalog">
+          <!-- PLACEHOLDER: Export the PLP redesign screens from Figma:
+               <img src="images/catalog-plp.png" alt="Seller Lab Catalog" />
+          -->
+          <div class="thumb-label">
+            <div class="thumb-label-title">Seller Lab<br/>Catalog</div>
+            <div class="thumb-label-sub">PLP · PDP · Virtual Bundles</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="tag tag-shipped">✓ Shipped</span>
+            <span class="tag tag-web">Web</span>
+            <span class="tag tag-role">Mainly solo</span>
+          </div>
+          <div class="card-title">Seller Lab — Catalog Redesign</div>
+          <div class="card-desc">
+            The existing catalog tool had grown organically and become hard to use at
+            scale — poor visual hierarchy, buried filters, unclear product statuses, and no
+            export capability. The redesign introduced a scannable product listing page,
+            a restructured product detail editor, and a new virtual bundles tool — all built
+            on clear separation of fulfillment methods and actionable issue surfacing.
+          </div>
+          <div class="card-footer">
+            <span class="card-company">noon · Seller Lab</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ⑤ ONBOARDING -->
+      <a class="card" href="https://www.figma.com/design/yeSdAMKYpUR0sdV8DW7RLP/" target="_blank">
+        <div class="card-thumb thumb-onboard">
+          <!-- PLACEHOLDER: Export the Onboarding cover from Figma:
+               <img src="images/onboarding-cover.png" alt="Seller Lab Onboarding" />
+          -->
+          <div class="thumb-label">
+            <div class="thumb-label-title">Seller Lab<br/>Onboarding</div>
+            <div class="thumb-label-sub">Store creation · Dashboard · Guide</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="tag tag-shipped">✓ Shipped</span>
+            <span class="tag tag-web">Web</span>
+            <span class="tag tag-role">Solo lead</span>
+          </div>
+          <div class="card-title">Seller Lab — Onboarding</div>
+          <div class="card-desc">
+            Designed the end-to-end onboarding experience for new noon sellers: store creation
+            and document submission, a personalised seller dashboard, a contextual seller guide,
+            and a personalisation questionnaire to tailor the experience. The goal was to get
+            sellers from sign-up to first live product as smoothly as possible.
+            <!-- PLACEHOLDER: Add outcome if you have it: "Reduced time-to-first-listing by X%" -->
+          </div>
+          <div class="card-footer">
+            <span class="card-company">noon · Seller Lab</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ⑥ NAVIGATION -->
+      <a class="card" href="https://www.figma.com/design/7bw9LVI0WqZEKpa3v6Vz2w/" target="_blank">
+        <div class="card-thumb thumb-nav">
+          <!-- PLACEHOLDER: Export a clean navigation screen from Figma:
+               <img src="images/nav-cover.png" alt="Navigation Redesign" />
+          -->
+          <div class="thumb-label">
+            <div class="thumb-label-title">Seller Lab<br/>Navigation</div>
+            <div class="thumb-label-sub">Sidebar · Toolbar · Information architecture</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="tag tag-shipped">✓ v1 Shipped</span>
+            <span class="tag tag-web">Web</span>
+            <span class="tag tag-exploration">Exploration</span>
+            <span class="tag tag-role">Solo + joint</span>
+          </div>
+          <div class="card-title">Seller Lab — Navigation Redesign</div>
+          <div class="card-desc">
+            A long, iterative project to redesign how sellers navigate the Seller Lab
+            platform. The work involved deep information architecture decisions, sidebar and
+            toolbar design, and multiple rounds of exploration (Nav Trials) as the product
+            grew in complexity. v1 shipped; the trials phase explores the next evolution.
+            <!-- PLACEHOLDER: Add the key design challenge or insight: "The core tension was X vs Y" -->
+          </div>
+          <div class="card-footer">
+            <span class="card-company">noon · Seller Lab</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <!-- PLACEHOLDER: Write your own about section — this is a draft based on your work -->
+        <h2>Design for<br />complex systems</h2>
+        <p>
+          I'm a product designer who specialises in seller and operations tooling —
+          environments where the wrong design decision can cost someone their income,
+          or leave an ops team blind during a critical moment.
+        </p>
+        <p>
+          My work spans the full product lifecycle: from initial scoping and information
+          architecture through to shipped product and iteration. I'm comfortable going deep
+          into edge cases, working closely with engineers, and building the systems that make
+          a design team's work consistent.
+        </p>
+        <!-- PLACEHOLDER: Add a personal touch — your process, something you care about, or what you're looking for next -->
+      </div>
+      <div class="about-right">
+        <ul class="about-list">
+          <li>
+            <div class="about-list-icon">🛠</div>
+            <div class="about-list-text">
+              <strong>Tools</strong>
+              <span>Figma, FigJam, Maze, Notion</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">🎯</div>
+            <div class="about-list-text">
+              <strong>Specialities</strong>
+              <span>Complex web tools, mobile apps, design systems, B2B/ops products</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">🏢</div>
+            <div class="about-list-text">
+              <!-- PLACEHOLDER: Update company and duration -->
+              <strong>Currently</strong>
+              <span>Product Designer at noon</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">📍</div>
+            <div class="about-list-text">
+              <!-- PLACEHOLDER: Update your location -->
+              <strong>Based in</strong>
+              <span>UAE</span>
+            </div>
+          </li>
+          <li>
+            <div class="about-list-icon">✉️</div>
+            <div class="about-list-text">
+              <strong>Contact</strong>
+              <span>saismail@noon.com</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <!-- PLACEHOLDER: Update name -->
+      <span class="footer-left">© 2026 Sara Ismail</span>
+      <div class="footer-links">
+        <!-- PLACEHOLDER: Add real social/contact links -->
+        <a href="mailto:saismail@noon.com">Email</a>
+        <a href="#" target="_blank">LinkedIn</a>
+        <a href="#" target="_blank">Resume</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
