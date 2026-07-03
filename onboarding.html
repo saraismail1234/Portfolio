@@ -242,6 +242,39 @@
     .stat-inline-num { font-size: 22px; font-weight: 700; color: #134E4A; letter-spacing: -0.5px; }
     .stat-inline-label { font-size: 12px; color: #0F766E; margin-top: 2px; }
 
+    /* ── INTERACTIVE PROTOTYPE ───────────────────── */
+    .proto-section { border-top: 1px solid var(--border); background: var(--bg); }
+    .proto-inner { max-width: 1120px; margin: 0 auto; padding: 64px 32px 8px; }
+    .proto-h2 {
+      font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+      color: var(--text-primary); margin-bottom: 12px; line-height: 1.25;
+    }
+    .proto-lead {
+      font-size: 16px; color: var(--text-secondary); line-height: 1.7;
+      max-width: 700px; margin-bottom: 28px;
+    }
+    .browser-frame {
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: 0 12px 44px rgba(0,0,0,0.12); background: #fff;
+    }
+    .browser-bar {
+      height: 42px; background: #F1F1EF; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px; padding: 0 16px;
+    }
+    .browser-bar .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+    .browser-bar .dot.red { background: #FF5F57; }
+    .browser-bar .dot.amber { background: #FEBC2E; }
+    .browser-bar .dot.green { background: #28C840; }
+    .browser-url {
+      margin-left: 12px; background: #fff; border: 1px solid var(--border);
+      border-radius: 100px; height: 24px; display: flex; align-items: center;
+      padding: 0 14px; font-size: 12px; color: var(--text-muted);
+    }
+    .browser-body { background: #fff; line-height: 0; }
+    .browser-body iframe { width: 100%; height: 800px; border: 0; display: block; }
+    .proto-caption { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 14px; }
+    @media (max-width: 900px) { .browser-body iframe { height: 680px; } }
+
     /* ── PROJECT NAV ─────────────────────────────── */
     .project-nav {
       max-width: 1120px; margin: 0 auto;
@@ -659,6 +692,30 @@
       </div>
     </div>
   </div>
+
+  <!-- ── INTERACTIVE PROTOTYPE ─────────────────── -->
+  <section class="proto-section">
+    <div class="proto-inner">
+      <div class="section-label">Interactive Prototype</div>
+      <h2 class="proto-h2">Walk through the Legal Entity onboarding flow</h2>
+      <p class="proto-lead">
+        A clickable recreation of the redesigned six-step submission flow — from store
+        creation through business, tax, representative, payout and terms. Use
+        <strong>Continue</strong> and <strong>Back</strong> to move between steps, and try
+        selecting a payout method to see the bank details expand in place.
+      </p>
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <span class="dot red"></span><span class="dot amber"></span><span class="dot green"></span>
+          <div class="browser-url">seller.noon.com/onboarding</div>
+        </div>
+        <div class="browser-body">
+          <iframe src="le-flow-prototype.html" title="Legal Entity onboarding flow prototype" loading="lazy"></iframe>
+        </div>
+      </div>
+      <p class="proto-caption">Prototype — recreated from the production Figma flow. Field values are illustrative.</p>
+    </div>
+  </section>
 
   <div class="project-nav">
     <a class="proj-nav-card" href="da-app.html">

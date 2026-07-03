@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>noon Seller — Legal Entity Onboarding (Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #0e59ff;
+    --primary-hover: #0b47d6;
+    --fg: #0a0a0a;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --muted-2: #9ca3af;
+    --border: #e5e7eb;
+    --input-border: #d1d5db;
+    --bg-subtle: #f9fafb;
+    --info: #0284c7;
+    --info-bg: rgba(2,132,199,0.08);
+    --info-heading: #075985;
+    --info-body: #0369a1;
+    --req: #dc2626;
+    --amber-bg: #fff7ed;
+    --amber-title: #ea580c;
+    --amber-text: #c2410c;
+    --radius-field: 8px;
+    --radius-box: 10px;
+  }
+
+  html, body { height: 100%; }
+  body {
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .np { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── TOP BAR ─────────────────────────────── */
+  .np-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px; padding: 0 24px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0; background: #fff;
+  }
+  .np-topbar-left { display: flex; align-items: center; gap: 18px; }
+  .np-burger { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+  .np-burger span { width: 18px; height: 2px; background: #111; border-radius: 2px; }
+  .np-logo { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 21px; color: #111; letter-spacing: -0.5px; }
+  .np-logo svg { display: block; }
+  .np-topbar-right { display: flex; align-items: center; gap: 10px; }
+  .np-icon-btn {
+    width: 34px; height: 34px; border-radius: 50%; background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center;
+    color: #4b5563; cursor: pointer;
+  }
+  .np-icon-btn svg { width: 17px; height: 17px; }
+  .np-lang { width: auto; padding: 0 10px; gap: 4px; font-size: 12px; font-weight: 500; }
+  .np-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #dbe4f5; color: #3557a8; font-weight: 600; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── STEPPER ─────────────────────────────── */
+  .np-stepper {
+    display: flex; padding: 20px 40px 18px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0; background: #fff;
+  }
+  .np-step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+  .np-step-track { display: flex; align-items: center; width: 100%; }
+  .np-step-line { flex: 1; height: 2px; background: var(--border); }
+  .np-step-line.hidden { visibility: hidden; }
+  .np-step-line.done { background: var(--primary); }
+  .np-step-node {
+    width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin: 0 2px;
+    display: flex; align-items: center; justify-content: center;
+    background: #d1d5db; color: #fff;
+  }
+  .np-step-node svg { width: 12px; height: 12px; }
+  .np-step.done .np-step-node { background: var(--primary); }
+  .np-step.active .np-step-node {
+    background: #fff; border: 2px solid var(--primary); width: 18px; height: 18px;
+  }
+  .np-step-label {
+    font-size: 12px; margin-top: 8px; color: var(--muted-2); font-weight: 500;
+    text-align: center; white-space: nowrap;
+  }
+  .np-step.done .np-step-label, .np-step.active .np-step-label { color: var(--text); }
+
+  /* ── MAIN LAYOUT ─────────────────────────── */
+  .np-main { display: flex; flex: 1; min-height: 560px; }
+  .np-form-col { flex: 1.55; padding: 34px 44px 28px; display: flex; flex-direction: column; }
+  .np-side-col { flex: 1; background: var(--bg-subtle); padding: 28px 30px; border-left: 1px solid var(--border); position: relative; }
+
+  .np-view { display: none; flex-direction: column; flex: 1; }
+  .np-view.active { display: flex; }
+
+  .np-h1 { font-size: 24px; font-weight: 600; color: var(--fg); letter-spacing: -0.4px; display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .np-badge-opt { font-size: 12px; font-weight: 600; color: var(--info); background: var(--info-bg); padding: 2px 10px; border-radius: 999px; letter-spacing: 0; }
+  .np-section-title { font-size: 16px; font-weight: 600; color: var(--fg); margin-bottom: 3px; }
+  .np-section-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+  /* Form primitives */
+  .np-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 20px; margin-bottom: 18px; }
+  .np-field { display: flex; flex-direction: column; }
+  .np-field.full { grid-column: 1 / -1; }
+  .np-label { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .np-label .req { color: var(--req); margin-left: 2px; }
+  .np-help-text { font-size: 12px; color: var(--muted-2); margin-top: 5px; }
+
+  .np-input, .np-select {
+    height: 44px; border: 1px solid var(--input-border); border-radius: var(--radius-field);
+    padding: 0 14px; font-size: 14px; font-family: inherit; color: var(--fg); background: #fff;
+    width: 100%; display: flex; align-items: center; gap: 8px;
+  }
+  .np-input::placeholder { color: var(--muted-2); }
+  input.np-input:focus, .np-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14,89,255,0.12); }
+  .np-input-wrap { position: relative; display: flex; align-items: center; }
+  .np-input-wrap .lead-icon { position: absolute; left: 13px; color: var(--muted-2); pointer-events: none; display: flex; }
+  .np-input-wrap .lead-icon svg { width: 16px; height: 16px; }
+  .np-input-wrap.has-icon input.np-input, .np-input-wrap.has-icon .np-select { padding-left: 38px; }
+  .np-select {
+    justify-content: space-between; cursor: pointer; color: var(--fg);
+    position: relative;
+  }
+  .np-select .chev { color: var(--muted); flex-shrink: 0; }
+  .np-select .placeholder { color: var(--muted-2); }
+  .np-select-inner { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+  .np-select-inner .globe { color: var(--muted); display: flex; }
+
+  .np-checkbox { display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer; font-size: 13px; color: var(--text); }
+  .np-checkbox .box { width: 16px; height: 16px; border: 1.5px solid var(--input-border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .np-checkbox.checked .box { background: var(--primary); border-color: var(--primary); }
+  .np-checkbox.checked .box svg { color: #fff; width: 11px; height: 11px; }
+
+  .np-radio-row { display: flex; gap: 26px; margin: 4px 0 4px; }
+  .np-radio { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: var(--text); }
+  .np-radio .dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--input-border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .np-radio.on .dot { border-color: var(--primary); }
+  .np-radio.on .dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+
+  .np-textarea { min-height: 72px; border: 1px solid var(--input-border); border-radius: var(--radius-field); padding: 10px 14px; font-size: 14px; font-family: inherit; color: var(--muted-2); resize: vertical; width: 100%; }
+  .np-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14,89,255,0.12); }
+
+  .np-info-banner {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: var(--info-bg); border-radius: var(--radius-field);
+    padding: 12px 14px; font-size: 13px; color: var(--info); font-weight: 500; line-height: 1.5;
+  }
+  .np-info-banner svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .np-divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+  /* Upload dropzone */
+  .np-upload {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-box);
+    padding: 18px 18px; cursor: pointer; margin-bottom: 22px;
+  }
+  .np-upload:hover { border-color: var(--primary); background: #f5f8ff; }
+  .np-upload-icon { width: 40px; height: 40px; border-radius: 8px; background: #e8f0ff; color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .np-upload-icon svg { width: 18px; height: 18px; }
+  .np-upload-title { font-size: 14px; font-weight: 600; color: var(--fg); }
+  .np-upload-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── FOOTER NAV ─────────────────────────── */
+  .np-nav { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 26px; }
+  .np-btn {
+    height: 42px; border-radius: 999px; padding: 0 22px; font-size: 14px; font-weight: 600;
+    font-family: inherit; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .np-btn-back { background: #fff; border: 1px solid var(--input-border); color: var(--text); }
+  .np-btn-back:hover { background: var(--bg-subtle); }
+  .np-btn-primary { background: var(--primary); color: #fff; }
+  .np-btn-primary:hover { background: var(--primary-hover); }
+  .np-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ── SIDE PANEL (help) ───────────────────── */
+  .np-side-note { font-size: 12px; color: var(--muted-2); text-align: right; margin-bottom: 14px; }
+  .np-help-intro {
+    background: var(--info-bg); border-radius: var(--radius-box); padding: 16px;
+    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 22px;
+  }
+  .np-help-intro .qmark { color: var(--info); flex-shrink: 0; margin-top: 1px; }
+  .np-help-intro-title { font-size: 14px; font-weight: 600; color: var(--info-heading); margin-bottom: 5px; }
+  .np-help-intro-body { font-size: 13px; color: var(--info-body); line-height: 1.55; }
+  .np-help-link { display: inline-flex; align-items: center; gap: 4px; color: var(--primary); font-weight: 600; font-size: 13px; margin-top: 8px; }
+
+  .np-illustration { margin: 4px 0 22px; display: flex; justify-content: center; }
+
+  .np-help-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-top: 1px solid var(--border); }
+  .np-help-item:first-of-type { border-top: 1px solid var(--border); }
+  .np-help-icon { width: 34px; height: 34px; border-radius: 8px; background: #eef1f4; color: #4b5563; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .np-help-icon svg { width: 17px; height: 17px; }
+  .np-help-item-title { font-size: 13px; font-weight: 600; color: var(--fg); margin-bottom: 3px; }
+  .np-help-item-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+  .np-help-list { list-style: none; margin-top: 2px; }
+  .np-help-list li { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+  .np-help-list.dashed li { padding-left: 12px; position: relative; }
+  .np-help-list.dashed li::before { content: "·"; position: absolute; left: 2px; }
+
+  .np-amber {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: var(--amber-bg); border-radius: var(--radius-box); padding: 13px 14px; margin-top: 16px;
+  }
+  .np-amber svg { color: var(--amber-title); width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+  .np-amber-title { font-size: 13px; font-weight: 600; color: var(--amber-title); margin-bottom: 3px; }
+  .np-amber-body { font-size: 12.5px; color: var(--amber-text); line-height: 1.55; }
+
+  /* ── STOREFRONT PREVIEW (screen 1) ───────── */
+  .np-store { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,0.06); }
+  .np-store-bar { background: #FEEE00; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+  .np-store-bar .deliver { font-size: 9px; font-weight: 600; color: #111; line-height: 1.1; }
+  .np-store-search { flex: 1; background: #fff; border-radius: 6px; height: 26px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; color: var(--muted-2); }
+  .np-store-body { padding: 22px 18px 18px; position: relative; background: linear-gradient(180deg,#FFFDF0 0%, #fff 60%); min-height: 210px; }
+  .np-store-logo { width: 62px; height: 62px; border-radius: 50%; background: #fff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: #eab308; }
+  .np-store-name { margin-top: 12px; border: 1px dashed var(--input-border); border-radius: 8px; padding: 9px 12px; font-size: 12px; color: var(--muted-2); }
+  .np-store-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .np-store-card { border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+  .np-store-card .t { font-size: 11px; font-weight: 700; color: var(--fg); display: flex; align-items: center; gap: 4px; }
+  .np-store-card .s { font-size: 10px; color: var(--muted); margin-top: 6px; }
+  .np-store-card .bar { height: 5px; background: #eef1f4; border-radius: 3px; margin-top: 8px; }
+
+  /* Document illustration (isometric-ish stacked doc) */
+  .np-doc { transform: rotate(-8deg); }
+
+  /* T&C box */
+  .np-tc-box { border: 1px solid var(--border); border-radius: var(--radius-box); padding: 22px 24px; height: 320px; overflow-y: auto; background: #fff; }
+  .np-tc-box h4 { font-size: 14px; font-weight: 700; color: var(--fg); margin-bottom: 14px; }
+  .np-tc-box h5 { font-size: 13px; font-weight: 700; color: var(--fg); margin: 16px 0 6px; }
+  .np-tc-box ul { list-style: none; }
+  .np-tc-box li { font-size: 12.5px; color: var(--text); line-height: 1.7; padding-left: 14px; position: relative; }
+  .np-tc-box li::before { content: "•"; position: absolute; left: 2px; color: var(--muted); }
+  .np-tc-box .plain { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-top: 4px; }
+  .np-tc-agree { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 13px; color: var(--text); cursor: pointer; }
+  .np-tc-agree-sub { font-size: 12px; color: var(--muted-2); margin-top: 6px; padding-left: 26px; }
+
+  @media (max-width: 860px) {
+    .np-side-col { display: none; }
+    .np-step-label { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="np">
+
+  <!-- ── TOP BAR ── -->
+  <div class="np-topbar">
+    <div class="np-topbar-left">
+      <div class="np-burger"><span></span><span></span><span></span></div>
+      <div class="np-logo">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 1a10 10 0 1 0 6.5 17.6A8 8 0 0 1 11 3.4 10 10 0 0 0 11 1Z" fill="#111"/></svg>
+        noon
+      </div>
+    </div>
+    <div class="np-topbar-right">
+      <div class="np-icon-btn" title="Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg></div>
+      <div class="np-icon-btn" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+      <div class="np-icon-btn" title="What's new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 15-7v16L3 13v-2Z"/><path d="M11.6 16.8 11 21a1 1 0 0 1-1.9.3L7.5 15"/></svg></div>
+      <div class="np-icon-btn np-lang" title="Language"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg><span>▾</span></div>
+      <div class="np-avatar">SI</div>
+    </div>
+  </div>
+
+  <!-- ── STEPPER ── -->
+  <div class="np-stepper" id="stepper">
+    <!-- built by JS -->
+  </div>
+
+  <!-- ── MAIN ── -->
+  <div class="np-main">
+    <div class="np-form-col">
+
+      <!-- VIEW 1 · STORE CREATION -->
+      <div class="np-view" data-view="0">
+        <div class="np-h1">Create Your Store</div>
+        <div class="np-row">
+          <div class="np-field">
+            <span class="np-label">Where do you want to sell?<span class="req">*</span></span>
+            <div class="np-select"><div class="np-select-inner"><span class="globe">🌐</span><span>United Arab Emirates</span></div><span class="chev">▾</span></div>
+            <span class="np-help-text">This is the store country (where you want to operate).</span>
+          </div>
+          <div class="np-field">
+            <span class="np-label">Where are you legally registered?<span class="req">*</span></span>
+            <div class="np-select"><div class="np-select-inner"><span class="globe">🌐</span><span>United Arab Emirates</span></div><span class="chev">▾</span></div>
+            <div class="np-checkbox"><span class="box"></span>Same as store country</div>
+          </div>
+        </div>
+        <div class="np-row">
+          <div class="np-field">
+            <span class="np-label">English store name<span class="req">*</span></span>
+            <input class="np-input" placeholder="Type name in English" />
+          </div>
+          <div class="np-field">
+            <span class="np-label">Arabic store name<span class="req">*</span></span>
+            <input class="np-input" placeholder="Type name in Arabic" />
+          </div>
+        </div>
+        <div class="np-info-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.5" r="0.6" fill="currentColor"/></svg>
+          This is the store name that appears to customers on noon.
+        </div>
+        <div class="np-divider"></div>
+        <div class="np-section-title">Store contacts</div>
+        <div class="np-section-sub">We will use these to send you important business communications.</div>
+        <div class="np-row" style="margin-bottom:0">
+          <div class="np-field">
+            <span class="np-label">Email<span class="req">*</span></span>
+            <div class="np-input-wrap has-icon">
+              <span class="lead-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+              <input class="np-input" placeholder="Enter store email" />
+            </div>
+          </div>
+          <div class="np-field">
+            <span class="np-label">Phone number<span class="req">*</span></span>
+            <div class="np-input-wrap has-icon">
+              <span class="lead-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+              <input class="np-input" placeholder="20+" style="padding-left:44px" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2 · BUSINESS REGISTRATION -->
+      <div class="np-view" data-view="1">
+        <div class="np-h1">Business Registration</div>
+        <div class="np-section-title">Business Registration Document</div>
+        <div class="np-section-sub">Upload your business registration document.</div>
+        <div class="np-upload">
+          <div class="np-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+          <div><div class="np-upload-title">Click to upload or drag and drop</div><div class="np-upload-sub">PDF or image files (max. 10MB)</div></div>
+        </div>
+        <div class="np-section-title">Document Information</div>
+        <div class="np-section-sub">Review and edit the extracted information below.</div>
+        <div class="np-row">
+          <div class="np-field">
+            <span class="np-label">Business registration country<span class="req">*</span></span>
+            <div class="np-select"><div class="np-select-inner"><span class="globe">🌐</span><span>United Arab Emirates</span></div><span class="chev">▾</span></div>
+            <span class="np-help-text">Pre-selected based on your store details.</span>
+          </div>
+          <div class="np-field">
+            <span class="np-label">License issuing authority<span class="req">*</span></span>
+            <input class="np-input" value="Dubai Economy &amp; Tourism" />
+          </div>
+        </div>
+        <div class="np-row">
+          <div class="np-field">
+            <span class="np-label">License number<span class="req">*</span></span>
+            <input class="np-input" value="1234567890" />
+          </div>
+          <div class="np-field">
+            <span class="np-label">Company name<span class="req">*</span></span>
+            <input class="np-input" value="Dubai Economy &amp; Tourism" />
+            <span class="np-help-text">Please enter the exact name mentioned on the document.</span>
+          </div>
+        </div>
+        <div class="np-row">
+          <div class="np-field full">
+            <span class="np-label">Company address<span class="req">*</span></span>
+            <input class="np-input" value="1234567890" />
+          </div>
+        </div>
+        <div class="np-row">
+          <div class="np-field">
+            <span class="np-label">Issue date<span class="req">*</span></span>
+            <div class="np-input-wrap has-icon">
+              <span class="lead-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>
+              <input class="np-input" value="Jan 20,2025 - Feb 09,2025" />
+            </div>
+          </div>
+          <div class="np-field">
+            <span class="np-label">Expiry date<span class="req">*</span></span>
+            <div class="np-input-wrap has-icon">
+              <span class="lead-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>
+              <input class="np-input" value="Jan 20,2025 - Feb 09,2025" />
+            </div>
+          </div>
+        </div>
+        <div class="np-row" style="margin-bottom:0">
+          <div class="np-field full">
+            <span class="np-label">List of business activities<span class="req">*</span></span>
+            <textarea class="np-textarea" placeholder="Activities mentioned on business registration document&#10;–"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3 · TAX DETAILS -->
+      <div class="np-view" data-view="2">
+        <div class="np-h1">Tax Registration</div>
+        <span class="np-label" style="font-size:14px;margin-bottom:12px">Do you have a VAT registration in [store country]?<span class="req">*</span></span>
+        <div class="np-radio-row" style="margin-bottom:22px">
+          <div class="np-radio on"><span class="dot"></span>Yes, I have a VAT registration</div>
+          <div class="np-radio"><span class="dot"></span>No, I do not have a VAT registration</div>
+        </div>
+        <div class="np-row">
+          <div class="np-field">
+            <span class="np-label">VAT registration number<span class="req">*</span></span>
+            <input class="np-input" value="1234567890" />
+          </div>
+          <div class="np-field">
+            <span class="np-label">VAT expiry date<span class="req">*</span></span>
+            <div class="np-input-wrap has-icon">
+              <span class="lead-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>
+              <input class="np-input" value="Jan 20,2025 - Feb 09,2025" />
+            </div>
+          </div>
+        </div>
+        <div class="np-section-title">VAT Registration document</div>
+        <div class="np-section-sub">Upload your VAT registration document.</div>
+        <div class="np-upload" style="margin-bottom:0">
+          <div class="np-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+          <div><div class="np-upload-title">Click to upload or drag and drop</div><div class="np-upload-sub">PDF or image files (max. 10MB)</div></div>
+        </div>
+      </div>
+
+      <!-- VIEW 4 · BUSINESS REPRESENTATIVE -->
+      <div class="np-view" data-view="3">
+        <div class="np-h1">Business Representative</div>
+        <div class="np-section-title">Business Representative Details</div>
+        <div class="np-row" style="margin-top:14px">
+          <div class="np-field">
+            <span class="np-label">Full name<span class="req">*</span></span>
+            <input class="np-input" placeholder="Enter name" />
+            <span class="np-help-text">Enter full name as shown on ID</span>
+          </div>
+          <div class="np-field">
+            <span class="np-label">Email address<span class="req">*</span></span>
+            <div class="np-input-wrap has-icon">
+              <span class="lead-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+              <input class="np-input" placeholder="Enter email address" />
+            </div>
+          </div>
+        </div>
+        <div class="np-section-title">Business Representative ID</div>
+        <div class="np-section-sub">Upload a government-issued ID</div>
+        <div class="np-upload">
+          <div class="np-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+          <div><div class="np-upload-title">Click to upload or drag and drop</div><div class="np-upload-sub">PDF or image files (max. 10MB)</div></div>
+        </div>
+        <span class="np-label" style="font-size:14px;margin-bottom:8px">Does the attached document belong to the legal owner of the business?<span class="req">*</span></span>
+        <div class="np-radio-row" style="margin-bottom:18px">
+          <div class="np-radio"><span class="dot"></span>Yes,</div>
+          <div class="np-radio on"><span class="dot"></span>No</div>
+        </div>
+        <div class="np-section-title">Power of Attorney Document</div>
+        <div class="np-section-sub">Upload the POA authorizing this individual to represent the business</div>
+        <div class="np-upload" style="margin-bottom:0">
+          <div class="np-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+          <div><div class="np-upload-title">Click to upload or drag and drop</div><div class="np-upload-sub">PDF or image files (max. 10MB)</div></div>
+        </div>
+      </div>
+
+      <!-- VIEW 5 · PAYOUT / BANK ACCOUNT -->
+      <div class="np-view" data-view="4">
+        <div class="np-h1" id="payoutTitle">Payout Method <span class="np-badge-opt">Optional</span></div>
+        <div class="np-row" style="margin-bottom:0">
+          <div class="np-field full">
+            <span class="np-label">Select payment method<span class="req">*</span></span>
+            <div class="np-select" id="methodSelect"><div class="np-select-inner"><span class="placeholder" id="methodLabel">Select a method</span></div><span class="chev">▾</span></div>
+          </div>
+        </div>
+
+        <!-- Bank form (revealed after selecting Bank account) -->
+        <div id="bankForm" style="display:none;margin-top:18px">
+          <div class="np-row">
+            <div class="np-field full">
+              <span class="np-label">Beneficiary name<span class="req">*</span></span>
+              <input class="np-input" placeholder="Enter name" />
+              <span class="np-help-text">This is the same name of your legal entity.</span>
+              <div class="np-checkbox"><span class="box"></span>Beneficiary name is different from the company name.</div>
+            </div>
+          </div>
+          <div class="np-row">
+            <div class="np-field">
+              <span class="np-label">Currency<span class="req">*</span></span>
+              <div class="np-select"><div class="np-select-inner"><span class="placeholder">Select a currency</span></div><span class="chev">▾</span></div>
+            </div>
+            <div class="np-field">
+              <span class="np-label">Country<span class="req">*</span></span>
+              <div class="np-select"><div class="np-select-inner"><span class="globe">🌐</span><span class="placeholder">Select a country</span></div><span class="chev">▾</span></div>
+            </div>
+          </div>
+          <div class="np-row">
+            <div class="np-field full">
+              <span class="np-label">Swift code<span class="req">*</span></span>
+              <div class="np-select"><div class="np-select-inner"><span class="placeholder">Select a swift code</span></div><span class="chev">▾</span></div>
+            </div>
+          </div>
+          <div class="np-row">
+            <div class="np-field full">
+              <span class="np-label">Proof type<span class="req">*</span></span>
+              <div class="np-select"><div class="np-select-inner"><span class="placeholder">Select a proof type</span></div><span class="chev">▾</span></div>
+            </div>
+          </div>
+          <div class="np-divider"></div>
+          <div class="np-section-title">Bank proof</div>
+          <div class="np-upload" style="margin-bottom:0;margin-top:10px">
+            <div class="np-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+            <div><div class="np-upload-title">Click to upload or drag and drop</div><div class="np-upload-sub">PDF or image files (max. 10MB)</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 6 · TERMS & CONDITIONS -->
+      <div class="np-view" data-view="5">
+        <div class="np-h1">Terms and conditions</div>
+        <div class="np-tc-box">
+          <h4>Noon seller terms and conditions</h4>
+          <h5>1. Definitions</h5>
+          <ul>
+            <li>"Platform": Noon's website, mobile apps, and seller portals.</li>
+            <li>"Seller": Any individual or entity registered to sell products via Noon.</li>
+            <li>"Customer": End users purchasing products through the Platform.</li>
+            <li>"Products": Goods listed by the Seller on Noon.</li>
+            <li>"Services": Logistics, payments, marketing, fulfillment, and other services provided by Noon.</li>
+          </ul>
+          <h5>2. Seller Eligibility &amp; Account Registration</h5>
+          <ul>
+            <li>Sellers must be legally registered businesses with valid commercial documentation.</li>
+            <li>All information provided must be accurate and kept up to date.</li>
+            <li>Noon reserves the right to approve, reject, suspend, or terminate any Seller account at its discretion.</li>
+            <li>Sellers are responsible for all activity conducted through their account.</li>
+          </ul>
+          <p class="plain">No sugar-coating: if your documents are wrong or expired, your account can be frozen.</p>
+          <h5>3. Product Listings &amp; Content</h5>
+          <ul>
+            <li>Sellers are responsible for the accuracy, legality, and completeness of product listings.</li>
+            <li>Prohibited items, counterfeit goods, or IP-infringing products are strictly forbidden.</li>
+            <li>Product images, descriptions, and pricing must reflect the actual item delivered.</li>
+          </ul>
+          <p class="plain">No excuses: "supplier mistake" won't save you if customers complain.</p>
+        </div>
+        <div class="np-tc-agree np-checkbox" id="tcAgree"><span class="box"></span> I have read and agreed to the terms and conditions stated above.</div>
+        <div class="np-tc-agree-sub">A copy of this will be sent out to your registered email.</div>
+      </div>
+
+      <!-- FOOTER NAV -->
+      <div class="np-nav">
+        <button class="np-btn np-btn-back" id="backBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m0 0 6 6m-6-6 6-6"/></svg> Back
+        </button>
+        <button class="np-btn np-btn-primary" id="nextBtn">Continue</button>
+      </div>
+
+    </div>
+
+    <!-- ── SIDE PANEL ── -->
+    <div class="np-side-col">
+
+      <!-- SIDE 1 · storefront preview -->
+      <div class="np-side-view" data-side="0">
+        <div class="np-side-note">Store page example on noon.com</div>
+        <div class="np-store">
+          <div class="np-store-bar">
+            <div class="np-logo" style="font-size:15px;gap:5px"><svg width="15" height="15" viewBox="0 0 22 22"><path d="M11 1a10 10 0 1 0 6.5 17.6A8 8 0 0 1 11 3.4 10 10 0 0 0 11 1Z" fill="#111"/></svg>noon</div>
+            <div class="deliver">Deliver to<br>--</div>
+            <div class="np-store-search">What are you looking for?</div>
+          </div>
+          <div class="np-store-body">
+            <div class="np-store-logo"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9 4.5 4h15L21 9M3 9v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9M3 9h18M8 20v-6h8v6"/></svg></div>
+            <div class="np-store-name">Store name goes here</div>
+            <div class="np-store-cards">
+              <div class="np-store-card"><div class="t">Seller Rating <span style="color:var(--muted-2)">ⓘ</span></div><div class="bar"></div><div class="s"><b style="color:var(--fg)">86%</b> Positive Ratings</div></div>
+              <div class="np-store-card"><div class="t">Customers</div><div class="bar"></div><div class="s">During the last 90 days</div></div>
+            </div>
+            <div class="np-store-card" style="margin-top:12px;display:flex;align-items:center;gap:8px"><span style="font-size:16px">🏅</span><div><div class="t" style="font-size:10px">Great Recent Rating</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE 2 · trade license -->
+      <div class="np-side-view" data-side="1">
+        <div class="np-help-intro">
+          <span class="qmark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg></span>
+          <div>
+            <div class="np-help-intro-title">What is a Trade License?</div>
+            <div class="np-help-intro-body">An official permit issued by a UAE authority that legally allows a person or company to conduct specific business activities. It can be issued in the mainland or in a freezone.</div>
+            <a class="np-help-link">Learn more →</a>
+          </div>
+        </div>
+        <div class="np-illustration" data-doc="license"></div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><div class="np-help-item-title">Trade License validity</div><div class="np-help-item-body">Your trade license must have at least 30 days remaining validity at the time of submission.</div></div>
+        </div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
+          <div><div class="np-help-item-title">Business Activity</div><div class="np-help-item-body">Commonly accepted activities include</div>
+            <ul class="np-help-list"><li>General Trading</li><li>Sales</li><li>Manufacturing</li><li>Distribution / Wholesale</li><li>E-commerce</li><li>Retail</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE 3 · tax -->
+      <div class="np-side-view" data-side="2">
+        <div class="np-help-intro">
+          <span class="qmark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg></span>
+          <div>
+            <div class="np-help-intro-title">What is Tax Registration?</div>
+            <div class="np-help-intro-body">Your VAT registration documents issued by the Federal Tax Authority (FTA).</div>
+            <a class="np-help-link">Learn more →</a>
+          </div>
+        </div>
+        <div class="np-illustration" data-doc="tax"></div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg></div>
+          <div><div class="np-help-item-title">Which document do I need?</div>
+            <div class="np-help-item-body">If your annual taxable supplies exceed AED 375,000 — you must provide a VAT registration document from the FTA. If your annual taxable supplies are below AED 375,000 — you can submit a non-VAT declaration instead.</div>
+          </div>
+        </div>
+        <div class="np-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <div><div class="np-amber-title">Important</div><div class="np-amber-body">If your supplies grow to exceed AED 375,000 — either on or off the noon platform — you'll be required to provide a VAT registration at that time.</div></div>
+        </div>
+      </div>
+
+      <!-- SIDE 4 · representative -->
+      <div class="np-side-view" data-side="3">
+        <div class="np-help-intro">
+          <span class="qmark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg></span>
+          <div>
+            <div class="np-help-intro-title">What is an authorized signatory?</div>
+            <div class="np-help-intro-body">The person legally authorized to sign documents and act on behalf of the business.</div>
+            <a class="np-help-link">Learn more →</a>
+          </div>
+        </div>
+        <div class="np-illustration" data-doc="id"></div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M5 16c.7-1.5 2-2.2 4-2.2s3.3.7 4 2.2M15 9h4M15 13h3"/></svg></div>
+          <div><div class="np-help-item-title">Whose identity documents should I provide?</div><div class="np-help-item-body">The legal owner or manager of the business as named on your commercial registration.</div></div>
+        </div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4M7 13h6"/></svg></div>
+          <div><div class="np-help-item-title">Identity Document Required</div><div class="np-help-item-body">Passport<br>Emirates ID (front and back)</div></div>
+        </div>
+        <div class="np-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <div><div class="np-amber-title">Not named on the trade license?</div><div class="np-amber-body">You'll need to submit a Power of Attorney (POA) document showing your authority to act on behalf of the owner.</div></div>
+        </div>
+      </div>
+
+      <!-- SIDE 5 · bank -->
+      <div class="np-side-view" data-side="4">
+        <div class="np-help-intro">
+          <span class="qmark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg></span>
+          <div>
+            <div class="np-help-intro-title">Why do we need this?</div>
+            <div class="np-help-intro-body">Your bank account is where noon will deposit your earnings from sales. Make sure the account is in your company's name or your name as the business owner.</div>
+          </div>
+        </div>
+        <div class="np-illustration" data-doc="bank"></div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4M7 13h6"/></svg></div>
+          <div><div class="np-help-item-title">Accepted Proof Documents</div>
+            <ul class="np-help-list dashed"><li>Bank statement (last 3 months)</li><li>Bank letter with account details</li><li>Cancelled cheque</li></ul>
+          </div>
+        </div>
+        <div class="np-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <div><div class="np-amber-title">Notice</div><div class="np-amber-body">The beneficiary name must match the name of your company on the trade license.</div></div>
+        </div>
+      </div>
+
+      <!-- SIDE 6 · what happens next -->
+      <div class="np-side-view" data-side="5">
+        <div class="np-help-intro">
+          <span class="qmark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg></span>
+          <div>
+            <div class="np-help-intro-title">What happens next?</div>
+            <div class="np-help-intro-body">Once you've signed the terms and conditions, your documents will be submitted for review. Approval typically takes up to two business days.</div>
+          </div>
+        </div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+          <div><div class="np-help-item-title">List your first product</div><div class="np-help-item-body">Start adding products to your catalog.</div></div>
+        </div>
+        <div class="np-help-item">
+          <div class="np-help-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h13v13H1zM14 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg></div>
+          <div><div class="np-help-item-title">Set up fulfillment</div><div class="np-help-item-body" style="margin-bottom:6px">Choose how you'll ship your products</div>
+            <div class="np-help-item-body" style="margin-bottom:6px">→ FBN (Fulfilled by Noon) — noon handles storage, packing, and delivery on your behalf.</div>
+            <div class="np-help-item-body">→ FBP (Fulfilled by Partner) — you manage fulfillment and shipping directly.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const STEPS = ["Store creation","Business Registration","Tax details","Business representative","Bank account","T&Cs"];
+  let current = 0;
+
+  // Build stepper
+  const stepper = document.getElementById('stepper');
+  STEPS.forEach((label, i) => {
+    const step = document.createElement('div');
+    step.className = 'np-step';
+    step.innerHTML =
+      '<div class="np-step-track">' +
+        '<div class="np-step-line left' + (i===0?' hidden':'') + '"></div>' +
+        '<div class="np-step-node"><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m20 6-11 11-5-5"/></svg></div>' +
+        '<div class="np-step-line right' + (i===STEPS.length-1?' hidden':'') + '"></div>' +
+      '</div>' +
+      '<div class="np-step-label">' + label + '</div>';
+    stepper.appendChild(step);
+  });
+
+  const views = document.querySelectorAll('.np-view');
+  const sides = document.querySelectorAll('.np-side-view');
+  const stepEls = document.querySelectorAll('.np-step');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function render() {
+    views.forEach(v => v.classList.toggle('active', +v.dataset.view === current));
+    sides.forEach(s => s.style.display = (+s.dataset.side === current) ? 'block' : 'none');
+
+    stepEls.forEach((el, i) => {
+      el.classList.toggle('done', i < current);
+      el.classList.toggle('active', i === current);
+      const node = el.querySelector('.np-step-node');
+      node.querySelector('.check').style.display = (i < current) ? 'block' : 'none';
+      const lines = el.querySelectorAll('.np-step-line');
+      // left line done if this step index <= current (connects from previous done)
+      lines[0].classList.toggle('done', i <= current && i>0);
+      lines[1].classList.toggle('done', i < current);
+    });
+
+    backBtn.disabled = current === 0;
+    nextBtn.textContent = (current === STEPS.length - 1) ? 'Submit' : 'Continue';
+    if (current === STEPS.length - 1) {
+      nextBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg> Submit';
+    }
+    document.querySelector('.np-main').scrollTop = 0;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (current === STEPS.length - 1) { alert('🎉 Prototype: application submitted for review.'); return; }
+    if (current < STEPS.length - 1) current++;
+    render();
+  });
+  backBtn.addEventListener('click', () => { if (current > 0) current--; render(); });
+
+  // Payout method → reveal bank form
+  const methodSelect = document.getElementById('methodSelect');
+  const methodLabel = document.getElementById('methodLabel');
+  const bankForm = document.getElementById('bankForm');
+  const payoutTitle = document.getElementById('payoutTitle');
+  methodSelect.addEventListener('click', () => {
+    methodLabel.textContent = 'Bank account';
+    methodLabel.classList.remove('placeholder');
+    bankForm.style.display = 'block';
+    payoutTitle.innerHTML = 'Bank account <span class="np-badge-opt">Optional</span>';
+  });
+
+  // Simple interactivity: checkboxes / radios toggle
+  document.querySelectorAll('.np-checkbox').forEach(cb => {
+    cb.addEventListener('click', () => cb.classList.toggle('checked'));
+  });
+  document.querySelectorAll('.np-radio-row').forEach(row => {
+    row.querySelectorAll('.np-radio').forEach(r => {
+      r.addEventListener('click', () => {
+        row.querySelectorAll('.np-radio').forEach(x => x.classList.remove('on'));
+        r.classList.add('on');
+      });
+    });
+  });
+
+  // Build simple isometric document illustrations
+  document.querySelectorAll('[data-doc]').forEach(el => {
+    el.innerHTML = docSVG(el.dataset.doc);
+  });
+  function docSVG(kind){
+    const lines = [];
+    for(let i=0;i<7;i++){ lines.push('<rect x="'+(46)+'" y="'+(60+i*16)+'" width="'+(120 - (i%3)*20)+'" height="6" rx="3" fill="#cbd5e1"/>'); }
+    let extra = '';
+    if(kind==='bank'){ extra = '<rect x="150" y="120" width="60" height="34" rx="4" transform="rotate(8 180 137)" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/><text x="180" y="141" font-size="9" fill="#ef4444" text-anchor="middle" transform="rotate(8 180 137)" font-family="Figtree">CANCELLED</text>'; }
+    if(kind==='id'){ return '<svg width="240" height="180" viewBox="0 0 240 180" fill="none"><g transform="rotate(-6 120 90)"><rect x="40" y="55" width="120" height="78" rx="8" fill="#ece7dd" stroke="#d6cdb8"/><circle cx="65" cy="82" r="12" fill="#cbb99a"/><rect x="86" y="74" width="60" height="6" rx="3" fill="#c9bda3"/><rect x="86" y="88" width="48" height="5" rx="2.5" fill="#d3c8b0"/><rect x="86" y="100" width="54" height="5" rx="2.5" fill="#d3c8b0"/></g><g transform="rotate(10 160 80)"><rect x="120" y="40" width="86" height="115" rx="10" fill="#3f7c8c"/><circle cx="163" cy="70" r="14" fill="none" stroke="#bcd6dd" stroke-width="2"/><path d="M163 60v20M153 70h20" stroke="#bcd6dd" stroke-width="2"/><rect x="135" y="120" width="56" height="5" rx="2.5" fill="#8fb7c1"/><rect x="135" y="132" width="40" height="5" rx="2.5" fill="#8fb7c1"/></g></svg>'; }
+    return '<svg width="240" height="200" viewBox="0 0 240 200" fill="none"><g transform="rotate(-9 130 100)">'+
+      '<rect x="30" y="34" width="180" height="150" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>'+
+      '<rect x="46" y="46" width="90" height="9" rx="4" fill="#94a3b8"/>'+
+      lines.join('')+ extra +
+      '</g></svg>';
+  }
+
+  render();
+</script>
+</body>
+</html>
