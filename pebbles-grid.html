@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pebble Grid</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #E4DED6;
+        color: white;
+        font-family: sans-serif;
+    }
+    canvas {
+        display: block;
+        background-color: #E4DED6;
+        cursor: crosshair;
+    }
+    p {
+        position: fixed;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        font-size: 0.9em;
+        color: #5a5248;
+        pointer-events: none;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+    }
+    .page-link {
+        position: fixed;
+        bottom: 12px;
+        left: 16px;
+        font-size: 0.85em;
+        color: #5a5248;
+        text-decoration: none;
+        opacity: 0.7;
+    }
+    .page-link:hover { opacity: 1; text-decoration: underline; }
+    .page-link-right { left: auto; right: 16px; }
+
+    /* Control dashboard */
+    #panel {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        width: 232px;
+        max-height: calc(100vh - 28px);
+        display: flex;
+        flex-direction: column;
+        background: rgba(28,26,24,0.86);
+        color: #e8e2d8;
+        border-radius: 10px;
+        font-size: 12px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        z-index: 10;
+        overflow: hidden;
+        user-select: none;
+    }
+    #panel-head {
+        flex-shrink: 0;
+        padding: 10px 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255,255,255,0.05);
+        letter-spacing: 0.02em;
+    }
+    #panel-toggle { transition: transform 0.2s; }
+    #panel.collapsed #panel-toggle { transform: rotate(-90deg); }
+    #panel-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: 6px 12px 2px;
+        overflow-y: auto;
+    }
+    /* Always-visible slim scrollbar so it's clear there's more below */
+    #panel-body::-webkit-scrollbar { width: 9px; }
+    #panel-body::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    #panel-body::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.28);
+        border-radius: 5px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+    #panel-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.45); }
+    #panel.collapsed #panel-body,
+    #panel.collapsed #panel-actions { display: none; }
+    .ctrl { display: block; margin: 9px 0; }
+    .ctrl-top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3px;
+        color: #cfc8bb;
+    }
+    .ctrl-top .val { color: #fff; font-variant-numeric: tabular-nums; }
+    .ctrl-name { display: inline-flex; align-items: center; }
+    .info {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 6px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.4);
+        font-size: 9px;
+        font-style: italic;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: #cfc8bb;
+        cursor: help;
+        opacity: 0.6;
+    }
+    .info:hover { opacity: 1; border-color: rgba(255,255,255,0.8); }
+    #tip {
+        position: fixed;
+        max-width: 210px;
+        transform: translateY(-50%);
+        background: #15130f;
+        color: #e8e2d8;
+        border: 1px solid rgba(255,255,255,0.15);
+        padding: 7px 9px;
+        border-radius: 7px;
+        font-size: 11px;
+        line-height: 1.4;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0;
+        transition: opacity 0.12s;
+    }
+    #tip.show { opacity: 1; }
+    #toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(8px);
+        background: #15130f;
+        color: #f0ead8;
+        border: 1px solid rgba(255,255,255,0.15);
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+        z-index: 100;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .ctrl input[type=range] {
+        width: 100%;
+        margin: 0;
+        accent-color: #b9a585;
+        cursor: pointer;
+    }
+    #panel-actions {
+        flex-shrink: 0;
+        display: flex;
+        gap: 6px;
+        padding: 10px 12px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    #panel-actions button {
+        flex: 1;
+        padding: 6px 4px;
+        font-size: 11px;
+        border: none;
+        border-radius: 6px;
+        background: #5c5346;
+        color: #f0ead8;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    #panel-actions button:hover { background: #6d6353; }
+
+    /* Theme-colour palette */
+    #palette {
+        margin: 6px 0 2px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .palette-label { color: #cfc8bb; margin-bottom: 8px; }
+    #palette-swatches { display: flex; flex-wrap: wrap; gap: 7px; }
+    .swatch { position: relative; width: 30px; height: 30px; }
+    .swatch input[type=color] {
+        width: 30px; height: 30px; padding: 0;
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 6px; background: none; cursor: pointer;
+    }
+    .swatch input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+    .swatch input[type=color]::-webkit-color-swatch { border: none; border-radius: 5px; }
+    .swatch-del {
+        position: absolute; top: -6px; right: -6px;
+        width: 16px; height: 16px; line-height: 14px; padding: 0;
+        font-size: 12px; border: none; border-radius: 50%;
+        background: #4a443a; color: #fff; cursor: pointer; display: none;
+    }
+    .swatch:hover .swatch-del { display: block; }
+    #btn-addcolor {
+        margin-top: 9px; width: 100%; padding: 6px;
+        font-size: 11px; border: none; border-radius: 6px;
+        background: #5c5346; color: #f0ead8; cursor: pointer;
+    }
+    #btn-addcolor:hover { background: #6d6353; }
+</style>
+</head>
+<body>
+
+<canvas id="sandCanvas" width="400" height="400"></canvas>
+<a class="page-link" href="index-v2.html">← Portfolio</a>
+<a class="page-link page-link-right" href="pebbles-shore.html">Waves version →</a>
+
+<div id="panel">
+    <div id="panel-head"><span>Pebble Controls</span><span id="panel-toggle">▾</span></div>
+    <div id="panel-body"></div>
+    <div id="panel-actions">
+        <button id="btn-regen" title="New random scatter with current settings">Regenerate</button>
+        <button id="btn-save" title="Save current settings (persists across reloads)">Save</button>
+        <button id="btn-reset" title="Restore default settings">Reset</button>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('sandCanvas');
+const ctx = canvas.getContext('2d');
+
+// All tunable pebble parameters live here; the dashboard edits this object.
+const CONFIG = {
+    cellSize: 15,        // base pebble size in px
+    sizeMin: 0.5,        // min pebble diameter as a multiple of cellSize
+    sizeMax: 1.2,        // max pebble diameter as a multiple of cellSize
+    aspectVar: 0.02,     // how much pebbles squash / stretch (0 = none)
+    jitter: 0.08,        // outline vertex randomness (0 = exact base shapes)
+    variations: 60,      // number of distinct pre-rendered sprites
+    saturation: 1.5,     // multiplier on stone-tone saturation
+    lightness: 20,       // lightness offset added to every pebble
+    highlight: 6,        // top-left light-catch strength
+    shadowDepth: 27,     // dark edge strength
+    contactShadow: 0.08, // opacity of the soft shadow under each pebble
+    shadowBlur: 0.5,     // blur radius of that contact shadow (px)
+    speckle: 2.2,        // surface speckle density (0 = smooth)
+    colorJitter: 2.15,   // how much each pebble varies from its theme colour
+    jitterPos: 0.18,     // per-cell position jitter (fraction of cell, 0 = strict grid)
+    bgOpacity: 0.9,      // opacity of the pebble grid
+    grain: 9,            // sandy texture strength in the beige background (0 = flat)
+    waterOpacity: 0,     // pool water tint + caustics opacity (0 = off)
+    caustics: 0.45,      // brightness of the shifting light caustics
+    waveSpeed: 0.8,      // ripple animation speed
+    waterDistort: 3,     // how much the moving water refracts the layer beneath (px)
+    // Editable theme palette — each entry is an [hue, saturation%, lightness%] tone.
+    palette: [
+        [32, 18, 63], [30, 13, 71], [30,  7, 62],
+        [39, 22, 72], [0,   0, 76], [17,  4, 64],
+        [42,  7, 73], [210, 1, 64], [25, 16, 67],
+        [14, 12, 58], [45,  9, 65], [206, 3, 55],
+    ],
+};
+const DEFAULTS = JSON.parse(JSON.stringify(CONFIG)); // deep clone for Reset
+
+let CELL_SIZE = CONFIG.cellSize; // base pebble size in px
+
+// Seed that defines the current arrangement; only "Regenerate" changes it, so
+// tweaking other controls re-renders the same layout instead of reshuffling.
+let arrangementSeed = 0x1a2b3c4d;
+
+function clampL(v) { return Math.max(2, Math.min(96, v)); }
+
+// Deterministic PRNG (mulberry32) so each sprite is stable across rebuilds.
+function makeRng(seed) {
+    let s = seed >>> 0;
+    return function () {
+        s = (s + 0x6D2B79F5) | 0;
+        let t = Math.imul(s ^ (s >>> 15), 1 | s);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+// Stable per-cell seed, derived from grid coords + arrangementSeed. Same layout
+// across re-renders / resizes; only Regenerate changes it.
+function seedAt(gx, gy) {
+    let h = (Math.imul(gx, 73856093) ^ Math.imul(gy, 19349663) ^ arrangementSeed) | 0;
+    h = Math.imul(h ^ (h >>> 13), 0x5bd1e995);
+    h ^= h >>> 15;
+    return 1 + (h >>> 0) % 4093;
+}
+
+// HSL <-> hex helpers for the editable colour swatches.
+function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    let a = s * Math.min(l, 1 - l);
+    let f = function (n) {
+        let k = (n + h / 30) % 12;
+        let c = l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1)));
+        return Math.round(255 * c).toString(16).padStart(2, '0');
+    };
+    return '#' + f(0) + f(8) + f(4);
+}
+function hexToHsl(hex) {
+    let r = parseInt(hex.slice(1, 3), 16) / 255;
+    let g = parseInt(hex.slice(3, 5), 16) / 255;
+    let b = parseInt(hex.slice(5, 7), 16) / 255;
+    let max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+        let d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h *= 60;
+    }
+    return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+}
+
+// ---- Pebble sprite atlas -------------------------------------------------
+// Pre-render a set of organic, softly-shaded pebble sprites once, then scatter
+// them onto the canvas. Far more natural-looking — and faster — than redrawing
+// gradients and paths on every frame.
+
+// Hand-traced pebble silhouettes (normalised, centred, ~[-1, 1]). Outlines are
+// smoothed into rounded curves at draw time. Each is one of the shapes the user
+// drew; variations (scale / rotation / mirror / jitter) are generated per sprite.
+const BASE_SHAPES = [
+    // tall vertical pebble
+    [[-0.40,-0.88],[0.12,-0.98],[0.52,-0.66],[0.56,0.02],[0.46,0.66],[0.10,0.96],[-0.46,0.84],[-0.62,0.20],[-0.60,-0.48]],
+    // rounded square, gently bumpy
+    [[-0.60,-0.78],[0.22,-0.94],[0.70,-0.58],[0.86,0.10],[0.60,0.70],[-0.10,0.90],[-0.72,0.60],[-0.90,-0.10]],
+    // small near-round
+    [[-0.30,-0.84],[0.42,-0.80],[0.80,-0.20],[0.74,0.50],[0.20,0.84],[-0.50,0.74],[-0.84,0.10],[-0.70,-0.50]],
+    // rounded triangle
+    [[0.10,-0.94],[0.80,0.18],[0.54,0.80],[-0.42,0.86],[-0.86,0.08],[-0.50,-0.56]],
+    // potato / kidney, wider at the base
+    [[-0.10,-0.94],[0.46,-0.70],[0.56,-0.08],[0.70,0.50],[0.34,0.90],[-0.42,0.94],[-0.76,0.40],[-0.56,-0.20],[-0.60,-0.60]],
+    // egg, narrow top
+    [[0.00,-0.92],[0.56,-0.54],[0.70,0.22],[0.40,0.80],[-0.32,0.90],[-0.76,0.30],[-0.60,-0.42]],
+    // upright rounded rectangle
+    [[-0.46,-0.84],[0.26,-0.90],[0.60,-0.40],[0.62,0.40],[0.30,0.88],[-0.42,0.86],[-0.72,0.30],[-0.72,-0.42]],
+    // wide flat oval
+    [[-0.20,-0.66],[0.50,-0.72],[0.92,-0.10],[0.82,0.46],[0.18,0.66],[-0.58,0.60],[-0.92,0.00],[-0.66,-0.52]],
+];
+
+function makePebbleSprite(index) {
+    // Seeded RNG keyed to this sprite's index + the arrangement seed, so the
+    // structure (shape, orientation, tone choice) stays put across re-renders.
+    let rng = makeRng(arrangementSeed + Math.imul(index + 1, 0x9E3779B1));
+    let rnd = function (min, max) { return min + rng() * (max - min); };
+
+    let diameter = CELL_SIZE * rnd(CONFIG.sizeMin, CONFIG.sizeMax);
+    let r = diameter / 2;
+    let pad = Math.ceil(CONFIG.shadowBlur * 2 + 4);
+    let size = Math.ceil(diameter * 1.25 + pad * 2);
+    let c = document.createElement('canvas');
+    c.width = c.height = size;
+    let g = c.getContext('2d');
+    let cx = size / 2, cy = size / 2;
+
+    // Take one of the user's shapes and make a unique variation of it.
+    let base = BASE_SHAPES[Math.floor(rnd(0, BASE_SHAPES.length))];
+    let rot = rnd(0, Math.PI * 2);           // any orientation
+    let mirror = rng() < 0.5 ? -1 : 1;
+    let aspect = 1 + rnd(-CONFIG.aspectVar, CONFIG.aspectVar);
+    let cosr = Math.cos(rot), sinr = Math.sin(rot);
+    let pts = base.map(function (p) {
+        let x = p[0] * mirror * aspect + rnd(-CONFIG.jitter, CONFIG.jitter);
+        let y = p[1] + rnd(-CONFIG.jitter, CONFIG.jitter);
+        return [cx + (x * cosr - y * sinr) * r, cy + (x * sinr + y * cosr) * r];
+    });
+    function tracePath() {
+        let len = pts.length;
+        g.beginPath();
+        g.moveTo((pts[len - 1][0] + pts[0][0]) / 2, (pts[len - 1][1] + pts[0][1]) / 2);
+        for (let i = 0; i < len; i++) {
+            let p = pts[i], nxt = pts[(i + 1) % len];
+            g.quadraticCurveTo(p[0], p[1], (p[0] + nxt[0]) / 2, (p[1] + nxt[1]) / 2);
+        }
+        g.closePath();
+    }
+
+    // Soft contact shadow beneath the pebble
+    if (CONFIG.contactShadow > 0) {
+        g.save();
+        g.translate(0, r * 0.16);
+        g.filter = 'blur(' + CONFIG.shadowBlur + 'px)';
+        g.fillStyle = 'rgba(38,30,22,' + CONFIG.contactShadow + ')';
+        tracePath();
+        g.fill();
+        g.restore();
+    }
+
+    // Theme tone with slight per-sprite variation (scaled by colorJitter)
+    let pal = CONFIG.palette.length ? CONFIG.palette : [[30, 12, 60]];
+    let t = pal[Math.floor(rnd(0, pal.length))];
+    let cj = CONFIG.colorJitter;
+    let h = t[0] + rnd(-4, 4) * cj;
+    let s = Math.max(0, (t[1] + rnd(-4, 4) * cj) * CONFIG.saturation);
+    let l = clampL(t[2] + rnd(-6, 6) * cj + CONFIG.lightness);
+
+    // Clip to the blob, then fill a soft radial gradient (light catch top-left)
+    g.save();
+    tracePath();
+    g.clip();
+    let grad = g.createRadialGradient(cx - r * 0.35, cy - r * 0.42, r * 0.1, cx, cy, r * 1.15);
+    grad.addColorStop(0,    `hsl(${h}, ${s}%, ${clampL(l + CONFIG.highlight)}%)`);
+    grad.addColorStop(0.55, `hsl(${h}, ${s}%, ${l}%)`);
+    grad.addColorStop(1,    `hsl(${h}, ${s}%, ${clampL(l - CONFIG.shadowDepth)}%)`);
+    g.fillStyle = grad;
+    g.fillRect(0, 0, size, size);
+
+    // Fine speckle for surface texture
+    let speckles = Math.floor(diameter * CONFIG.speckle);
+    for (let i = 0; i < speckles; i++) {
+        g.fillStyle = `hsla(${h}, ${s}%, ${clampL(l + rnd(-14, 14))}%, 0.22)`;
+        g.fillRect(rnd(cx - r, cx + r), rnd(cy - r, cy + r), 1, 1);
+    }
+    g.restore();
+
+    return c;
+}
+
+const pebbleSprites = [];
+
+// (Re)generate the sprite atlas from the current CONFIG.
+function rebuildSprites() {
+    pebbleSprites.length = 0;
+    let count = Math.max(1, Math.round(CONFIG.variations));
+    for (let i = 0; i < count; i++) pebbleSprites.push(makePebbleSprite(i));
+}
+
+// Offscreen layer holding the baked pebble grid.
+const bgCanvas = document.createElement('canvas');
+const bgCtx = bgCanvas.getContext('2d');
+
+// Place one pebble per grid cell, centred with a small seed-based position
+// jitter so the grid reads as natural rather than mechanical.
+function buildBackground() {
+    bgCanvas.width = canvas.width;
+    bgCanvas.height = canvas.height;
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    if (!pebbleSprites.length) return;
+
+    let cols = Math.ceil(canvas.width / CELL_SIZE);
+    let rows = Math.ceil(canvas.height / CELL_SIZE);
+    let jit = CELL_SIZE * CONFIG.jitterPos;     // max position wobble per cell
+    for (let gy = 0; gy < rows; gy++) {
+        for (let gx = 0; gx < cols; gx++) {
+            let v = seedAt(gx, gy);
+            let sp = pebbleSprites[v % pebbleSprites.length];
+            let jx = ((v % 101) / 100 - 0.5) * 2 * jit;
+            let jy = (((v >> 7) % 101) / 100 - 0.5) * 2 * jit;
+            let cx = gx * CELL_SIZE + CELL_SIZE / 2 + jx;
+            let cy = gy * CELL_SIZE + CELL_SIZE / 2 + jy;
+            bgCtx.drawImage(sp, cx - sp.width / 2, cy - sp.height / 2);
+        }
+    }
+}
+
+// Baked sandy background: the beige base with fine per-pixel grain + sparse
+// warm flecks. Rendered once (and on resize) into an offscreen canvas.
+const grainCanvas = document.createElement('canvas');
+const grainCtx = grainCanvas.getContext('2d');
+
+function clamp255(x) { return x < 0 ? 0 : x > 255 ? 255 : x; }
+
+function buildGrain() {
+    let W = canvas.width, H = canvas.height;
+    grainCanvas.width = W;
+    grainCanvas.height = H;
+    let br = 228, bg = 222, bb = 214;   // #E4DED6
+    let amp = CONFIG.grain;
+    if (amp <= 0) {
+        grainCtx.fillStyle = '#E4DED6';
+        grainCtx.fillRect(0, 0, W, H);
+        return;
+    }
+    let img = grainCtx.createImageData(W, H);
+    let d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+        let v = (Math.random() * 2 - 1) * amp;
+        if (Math.random() < 0.035) v += (Math.random() * 2 - 1) * amp * 2.2;  // sparse flecks
+        d[i]     = clamp255(br + v);          // warm bias: less variation in blue
+        d[i + 1] = clamp255(bg + v * 0.92);
+        d[i + 2] = clamp255(bb + v * 0.8);
+        d[i + 3] = 255;
+    }
+    grainCtx.putImageData(img, 0, 0);
+}
+
+// Offscreen composite of the underwater scene (sand + pebbles), so the moving
+// water can refract it as a single image.
+const sceneCanvas = document.createElement('canvas');
+const sceneCtx = sceneCanvas.getContext('2d');
+
+function composeScene() {
+    let W = canvas.width, H = canvas.height;
+    if (sceneCanvas.width !== W || sceneCanvas.height !== H) { sceneCanvas.width = W; sceneCanvas.height = H; }
+    sceneCtx.clearRect(0, 0, W, H);
+    sceneCtx.drawImage(grainCanvas, 0, 0);
+    sceneCtx.globalAlpha = CONFIG.bgOpacity;
+    sceneCtx.drawImage(bgCanvas, 0, 0);
+    sceneCtx.globalAlpha = 1.0;
+}
+
+// Draw the scene to the visible canvas with a watery wobble: each row is sampled
+// with an animated horizontal + vertical offset → refraction through moving water.
+function drawRefracted(time) {
+    let W = canvas.width, H = canvas.height;
+    let amp = CONFIG.waterDistort;
+    ctx.drawImage(sceneCanvas, 0, 0);   // base layer fills any edge gaps
+    let strip = 3;
+    for (let y = 0; y < H; y += strip) {
+        let dx = amp * Math.sin(y * 0.03 + time * 1.3) + amp * 0.5 * Math.sin(y * 0.013 - time * 0.9);
+        let dy = amp * 0.5 * Math.sin(y * 0.02 + time * 1.0);
+        let sy = Math.max(0, Math.min(H - strip, y - dy));
+        ctx.drawImage(sceneCanvas, 0, sy, W, strip, dx, y, W, strip);
+    }
+}
+
+// Compose the underwater scene, refract it by the moving water, then overlay
+// the pool tint + caustics.
+function render(t) {
+    let time = (t || 0) / 1000 * CONFIG.waveSpeed;
+    composeScene();
+    if (CONFIG.waterOpacity > 0 && CONFIG.waterDistort > 0) {
+        drawRefracted(time);
+    } else {
+        ctx.drawImage(sceneCanvas, 0, 0);
+    }
+    drawWater(time);
+}
+
+// Top-down pool effect: a translucent aqua tint over the whole surface plus
+// animated light caustics (the shifting bright web you see on a pool floor).
+// Caustics are computed on a small offscreen buffer and scaled up for a soft glow.
+const poolCanvas = document.createElement('canvas');
+const poolCtx = poolCanvas.getContext('2d');
+
+function drawWater(time) {
+    let op = CONFIG.waterOpacity;
+    if (op <= 0) return;
+    let W = canvas.width, H = canvas.height;
+
+    ctx.save();
+
+    // 1) Aqua tint — makes the pebbles look submerged. Gentle vertical shift in
+    //    depth gives a hint of deeper water lower down.
+    let tintGrad = ctx.createLinearGradient(0, 0, 0, H);
+    tintGrad.addColorStop(0, 'rgba(96, 182, 188,' + Math.min(0.14 * op, 0.6).toFixed(3) + ')');
+    tintGrad.addColorStop(1, 'rgba(58, 150, 165,' + Math.min(0.20 * op, 0.7).toFixed(3) + ')');
+    ctx.fillStyle = tintGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // 2) Caustics on a downsampled buffer (cheap; upscaling blurs them softly).
+    let scale = 8;
+    let cw = Math.max(1, Math.ceil(W / scale));
+    let ch = Math.max(1, Math.ceil(H / scale));
+    if (poolCanvas.width !== cw || poolCanvas.height !== ch) {
+        poolCanvas.width = cw; poolCanvas.height = ch;
+    }
+    let img = poolCtx.createImageData(cw, ch);
+    let d = img.data;
+    let amt = CONFIG.caustics;
+    let s = 0.011 * scale;          // lower frequency → larger, calmer patterns
+    let idx = 0;
+    for (let y = 0; y < ch; y++) {
+        for (let x = 0; x < cw; x++) {
+            let xx = x * s, yy = y * s;
+            // A few slow, low-frequency waves → soft rolling pools of light.
+            let n = Math.sin(xx + time * 0.8)
+                  + Math.sin(yy * 1.2 - time * 0.6)
+                  + Math.sin((xx + yy) * 0.6 + time * 0.4);
+            let b = Math.sin(n) * 0.5 + 0.5;       // 0..1, smooth
+            b = b * b;                             // gentle falloff → soft highlights
+            d[idx]     = 224;                      // light aqua-white caustic colour
+            d[idx + 1] = 255;
+            d[idx + 2] = 250;
+            d[idx + 3] = Math.min(255, b * 255 * amt);
+            idx += 4;
+        }
+    }
+    poolCtx.putImageData(img, 0, 0);
+
+    // Additive blend so caustics read as glowing light on the surface.
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = Math.min(op, 1.4);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(poolCanvas, 0, 0, cw, ch, 0, 0, W, H);
+
+    ctx.restore();
+}
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    buildGrain();
+    buildBackground();
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+// ---- Control dashboard ---------------------------------------------------
+// Each control maps to a CONFIG key. `type` decides how a change is applied:
+//   size   -> pebble size changed: rebuild sprites + rescatter the bed
+//   visual -> appearance changed:  rebuild sprites + rescatter the bed
+//   bg     -> scatter changed:     rescatter the bed only (sprites unchanged)
+//   draw   -> render-only:         picked up automatically on the next frame
+const CONTROLS = [
+    { key: 'cellSize',      label: 'Pebble size',    min: 6,   max: 40,  step: 1,    type: 'size',
+      desc: 'Base pebble size — bigger means larger, fewer pebbles.' },
+    { key: 'sizeMin',       label: 'Min scale',      min: 0.5, max: 2,   step: 0.05, type: 'visual',
+      desc: 'Smallest pebble, as a multiple of the pebble size.' },
+    { key: 'sizeMax',       label: 'Max scale',      min: 0.5, max: 3,   step: 0.05, type: 'visual',
+      desc: 'Largest pebble, as a multiple of the pebble size.' },
+    { key: 'aspectVar',     label: 'Aspect variation', min: 0, max: 0.6, step: 0.01, type: 'visual',
+      desc: 'How much pebbles stretch or squash out of round.' },
+    { key: 'jitter',        label: 'Edge jitter',    min: 0,   max: 0.2, step: 0.005, type: 'visual',
+      desc: 'Outline randomness — higher gives lumpier edges.' },
+    { key: 'variations',    label: 'Variations',     min: 4,   max: 60,  step: 1,    type: 'visual',
+      desc: 'Number of unique pebble shapes generated.' },
+    { key: 'saturation',    label: 'Saturation',     min: 0,   max: 2.5, step: 0.05, type: 'visual',
+      desc: 'Color intensity of the stones (0 = grey).' },
+    { key: 'lightness',     label: 'Lightness',      min: -30, max: 30,  step: 1,    type: 'visual',
+      desc: 'Brightens or darkens every pebble.' },
+    { key: 'highlight',     label: 'Highlight',      min: 0,   max: 50,  step: 1,    type: 'visual',
+      desc: 'Strength of the light catch on top of each pebble.' },
+    { key: 'shadowDepth',   label: 'Edge shadow',    min: 0,   max: 50,  step: 1,    type: 'visual',
+      desc: 'Darkness of the shaded rim — adds roundness.' },
+    { key: 'contactShadow', label: 'Drop shadow',    min: 0,   max: 0.7, step: 0.02, type: 'visual',
+      desc: 'Opacity of the soft shadow cast underneath.' },
+    { key: 'shadowBlur',    label: 'Shadow blur',    min: 0,   max: 12,  step: 0.5,  type: 'visual',
+      desc: 'Softness of that drop shadow.' },
+    { key: 'speckle',       label: 'Speckle',        min: 0,   max: 5,   step: 0.1,  type: 'visual',
+      desc: 'Amount of fine surface texture flecks.' },
+    { key: 'colorJitter',   label: 'Color variation', min: 0,  max: 3,   step: 0.05, type: 'visual',
+      desc: 'How far each pebble drifts from its theme color.' },
+    { key: 'jitterPos',     label: 'Grid jitter',    min: 0,  max: 0.5, step: 0.01, type: 'bg',
+      desc: 'How far pebbles wander from their grid cell (0 = strict grid).' },
+    { key: 'bgOpacity',     label: 'Opacity',        min: 0,  max: 1,   step: 0.05, type: 'draw',
+      desc: 'Opacity of the pebble grid.' },
+    { key: 'grain',         label: 'Grain',          min: 0,  max: 30,  step: 1,    type: 'grain',
+      desc: 'Subtle sandy texture in the beige background.' },
+    { key: 'waterOpacity',  label: 'Water',          min: 0,  max: 2,   step: 0.05, type: 'draw',
+      desc: 'Pool tint + caustics opacity — set to 0 to turn the water off.' },
+    { key: 'caustics',      label: 'Caustics',       min: 0,  max: 3,   step: 0.05, type: 'draw',
+      desc: 'Brightness of the shifting light patterns on the pool floor.' },
+    { key: 'waveSpeed',     label: 'Ripple speed',   min: 0,  max: 3,   step: 0.05, type: 'draw',
+      desc: 'How fast the water ripples.' },
+    { key: 'waterDistort',  label: 'Refraction',     min: 0,  max: 25,  step: 0.5,  type: 'draw',
+      desc: 'How much the moving water distorts the pebbles beneath it.' },
+];
+
+const inputs = {}, valSpans = {};
+let rebuildTimer = null;
+
+// ---- Persisting settings -------------------------------------------------
+// Browsers can't write back to the .html file, so settings are stored in
+// localStorage and reapplied on load — your tuning survives reloads.
+const STORE_KEY = 'pebbleGridConfig';
+
+function saveSettings() {
+    let json = JSON.stringify(CONFIG, null, 2);
+    try {
+        localStorage.setItem(STORE_KEY, json);
+    } catch (e) {
+        toast('Save failed');
+        return;
+    }
+    // Also copy the config to the clipboard so it can be pasted back to commit
+    // these values into the file's defaults.
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(json).then(
+            function () { toast('Saved ✓ — config copied to clipboard'); },
+            function () { fallbackCopy(json); }
+        );
+    } else {
+        fallbackCopy(json);
+    }
+}
+
+// If the clipboard API is unavailable, show the config so it can be copied.
+function fallbackCopy(json) {
+    toast('Settings saved ✓');
+    window.prompt('Copy this config and paste it back to bake into the file:', json);
+}
+
+function loadSettings() {
+    try {
+        let saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+        if (!saved) return;
+        Object.keys(CONFIG).forEach(function (k) {
+            if (k in saved) CONFIG[k] = saved[k];
+        });
+    } catch (e) { /* ignore corrupt storage */ }
+}
+
+// Small transient confirmation message.
+function toast(msg) {
+    let el = document.getElementById('toast');
+    if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.classList.remove('show'); }, 1600);
+}
+
+function fmt(ctrl) {
+    return ctrl.step < 1 ? CONFIG[ctrl.key].toFixed(2) : String(CONFIG[ctrl.key]);
+}
+
+// Debounce rebuilds so dragging a slider stays smooth.
+function schedule(type) {
+    if (rebuildTimer) clearTimeout(rebuildTimer);
+    rebuildTimer = setTimeout(function () {
+        if (type === 'size') {
+            CELL_SIZE = Math.round(CONFIG.cellSize);
+            rebuildSprites();
+            buildBackground();
+        } else if (type === 'bg') {
+            buildBackground();       // only placement changed, not the sprites
+        } else if (type === 'grain') {
+            buildGrain();            // only the background texture changed
+        } else {
+            rebuildSprites();
+            buildBackground();
+        }
+    }, 70);
+}
+
+function buildDashboard() {
+    const body = document.getElementById('panel-body');
+    CONTROLS.forEach(function (ctrl) {
+        const row = document.createElement('label');
+        row.className = 'ctrl';
+
+        const top = document.createElement('div');
+        top.className = 'ctrl-top';
+        const left = document.createElement('span'); left.className = 'ctrl-name';
+        const name = document.createElement('span'); name.textContent = ctrl.label;
+        const info = document.createElement('span');
+        info.className = 'info'; info.textContent = 'i'; info.dataset.tip = ctrl.desc;
+        left.appendChild(name); left.appendChild(info);
+        const val = document.createElement('span'); val.className = 'val';
+        top.appendChild(left); top.appendChild(val);
+
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.min = ctrl.min; input.max = ctrl.max; input.step = ctrl.step;
+        input.value = CONFIG[ctrl.key];
+
+        inputs[ctrl.key] = input; valSpans[ctrl.key] = val;
+        val.textContent = fmt(ctrl);
+
+        input.addEventListener('input', function () {
+            CONFIG[ctrl.key] = parseFloat(input.value);
+            val.textContent = fmt(ctrl);
+            if (ctrl.type !== 'draw') schedule(ctrl.type);
+        });
+
+        row.appendChild(top); row.appendChild(input);
+        body.appendChild(row);
+    });
+
+    // Editable theme-colour palette
+    const pal = document.createElement('div');
+    pal.id = 'palette';
+    pal.innerHTML =
+        '<div class="palette-label"><span class="ctrl-name">Theme colors' +
+        '<span class="info" data-tip="Stone tones pebbles are tinted from. Click a swatch to edit, hover for the × to remove, or add more.">i</span>' +
+        '</span></div>' +
+        '<div id="palette-swatches"></div>' +
+        '<button id="btn-addcolor">+ Add color</button>';
+    body.appendChild(pal);
+    buildPalette();
+    document.getElementById('btn-addcolor').addEventListener('click', function () {
+        CONFIG.palette.push([30, 12, 60]);
+        buildPalette();
+        schedule('visual');
+    });
+
+    // Floating tooltip for the (i) info icons — lives on <body> so it isn't
+    // clipped by the panel's scroll area, and shows instantly on hover.
+    const tip = document.createElement('div');
+    tip.id = 'tip';
+    document.body.appendChild(tip);
+    const panelEl = document.getElementById('panel');
+    panelEl.addEventListener('mouseover', function (e) {
+        const t = e.target.closest('.info');
+        if (!t) return;
+        tip.textContent = t.dataset.tip || '';
+        const r = t.getBoundingClientRect();
+        tip.style.top = (r.top + r.height / 2) + 'px';
+        tip.style.right = (window.innerWidth - r.left + 8) + 'px';
+        tip.classList.add('show');
+    });
+    panelEl.addEventListener('mouseout', function (e) {
+        if (e.target.closest('.info')) tip.classList.remove('show');
+    });
+
+    document.getElementById('panel-head').addEventListener('click', function () {
+        document.getElementById('panel').classList.toggle('collapsed');
+    });
+    document.getElementById('btn-regen').addEventListener('click', function () {
+        arrangementSeed = (Math.random() * 0xffffffff) | 0;  // new layout + shapes
+        rebuildSprites(); buildBackground();
+    });
+    document.getElementById('btn-save').addEventListener('click', saveSettings);
+    document.getElementById('btn-reset').addEventListener('click', function () {
+        try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+        Object.assign(CONFIG, JSON.parse(JSON.stringify(DEFAULTS)));
+        CONTROLS.forEach(function (ctrl) {
+            inputs[ctrl.key].value = CONFIG[ctrl.key];
+            valSpans[ctrl.key].textContent = fmt(ctrl);
+        });
+        buildPalette();
+        CELL_SIZE = Math.round(CONFIG.cellSize);
+        rebuildSprites();
+        buildBackground();
+    });
+}
+
+// Render the editable colour swatches from CONFIG.palette.
+function buildPalette() {
+    const wrap = document.getElementById('palette-swatches');
+    wrap.innerHTML = '';
+    CONFIG.palette.forEach(function (tone, idx) {
+        const cell = document.createElement('div');
+        cell.className = 'swatch';
+
+        const inp = document.createElement('input');
+        inp.type = 'color';
+        inp.value = hslToHex(tone[0], tone[1], tone[2]);
+        inp.addEventListener('input', function () {
+            CONFIG.palette[idx] = hexToHsl(inp.value);
+            schedule('visual');
+        });
+
+        const del = document.createElement('button');
+        del.className = 'swatch-del';
+        del.textContent = '×';
+        del.title = 'Remove colour';
+        del.addEventListener('click', function () {
+            if (CONFIG.palette.length > 1) {
+                CONFIG.palette.splice(idx, 1);
+                buildPalette();
+                schedule('visual');
+            }
+        });
+
+        cell.appendChild(inp); cell.appendChild(del);
+        wrap.appendChild(cell);
+    });
+}
+
+loadSettings();                       // apply any saved settings over defaults
+CELL_SIZE = Math.round(CONFIG.cellSize);
+rebuildSprites();
+resizeCanvas();
+buildDashboard();
+
+// Render loop — composites the bed and animates the water each frame.
+function loop(t) {
+    render(t);
+    requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
